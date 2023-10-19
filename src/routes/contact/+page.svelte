@@ -2,6 +2,7 @@
   import type { SelectOption } from "$lib/SelectOptionType";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
+  import MessageCard from "$lib/components/MessageCard.svelte";
   import SelectInput from "$lib/components/SelectInput.svelte";
   import TextArea from "$lib/components/TextArea.svelte";
   import Title from "$lib/components/Title.svelte";
@@ -60,17 +61,11 @@
 
 <Title text="Contact" />
 {#if message}
-  <p
-    class="{isError
-      ? 'bg-red-500'
-      : 'bg-teal-500'} my-2 text-white p-3 rounded-lg"
-  >
-    {message}
-  </p>
+  <MessageCard {message} {isError} />
 {/if}
 <form on:submit|preventDefault={handleSubmit} class="py-4">
-  <Input title="Votre adresse e-mail" name="email" type="email" />
-  <SelectInput title="Raison du message" name="reason" {options} />
-  <TextArea title="Contenu du message" name="content" />
+  <Input title="Votre adresse e-mail" name="email" type="email" isRequired />
+  <SelectInput title="Raison du message" name="reason" {options} isRequired />
+  <TextArea title="Contenu du message" name="content" isRequired />
   <Button text="Envoyer" />
 </form>

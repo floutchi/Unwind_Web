@@ -2,6 +2,7 @@
   export let title: string;
   export let name: string;
   export let type: string;
+  export let isRequired: boolean = false;
 </script>
 
 <div class="py-2">
@@ -11,5 +12,6 @@
     {name}
     id={name}
     class="p-3 outline-none border-2 border-gray-200 focus:border-teal-500 rounded-md w-full"
+    required={isRequired}
   />
 </div>
