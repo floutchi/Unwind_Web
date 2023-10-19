@@ -2,6 +2,7 @@
   import BeachFriends from "$lib/assets/beach_friends.jpg";
   import ChatBubble from "$lib/assets/chat_bubble.jpg";
   import Graph from "$lib/assets/graph.jpg";
+  import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import LandingSection from "$lib/components/LandingSection.svelte";
 
@@ -48,11 +49,7 @@
     <form on:submit|preventDefault={getStats} class="py-4">
       <Input title="Date de début" name="start" type="date" />
       <Input title="Date de fin" name="end" type="date" />
-      <input
-        type="submit"
-        value="Valider"
-        class="py-2 px-4 my-2 bg-teal-500 text-white rounded-full hover:cursor-pointer"
-      />
+      <Button text="Valider" />
     </form>
   </div>
   <img

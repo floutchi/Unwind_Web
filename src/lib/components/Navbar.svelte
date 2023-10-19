@@ -37,6 +37,7 @@
       on:click={closeLinks}>close</button
     >
     <NavLink text="Accueil" url={base} />
+    <NavLink text="Contact" url="{base}/contact" />
     <NavLink text="Connexion" url="{base}/auth/sign-in" />
     <li>
       <a
