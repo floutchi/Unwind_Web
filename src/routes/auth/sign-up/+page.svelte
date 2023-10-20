@@ -1,11 +1,24 @@
 <script lang="ts">
-  import { checkData, signUp } from "$lib/auth";
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
+  import { checkData, signUp, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
+  import { onMount } from "svelte";
 
   let message = "";
+
+  onMount(() => {
+    const unsubscribe = user.subscribe((value) => {
+      if (value) {
+        goto(base);
+      }
+    });
+
+    return unsubscribe;
+  });
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";

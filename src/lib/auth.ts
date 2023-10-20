@@ -1,4 +1,14 @@
+import { writable } from "svelte/store";
 import { isEmailValid } from "./email";
+
+export interface User {
+  firstName: string;
+  lastName: string;
+  email: string;
+  token: string;
+}
+
+export const user = writable<User | null>(null);
 
 export function checkData(
   firstName: string,
@@ -53,6 +63,10 @@ export async function signUp(
   }
 
   const json = await res.json();
-  const token = json.token;
-  console.log(token);
+
+  if (json.message) {
+    throw new Error(json.message);
+  }
+
+  user.set(json as User);
 }
