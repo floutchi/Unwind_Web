@@ -10,6 +10,8 @@ export interface User {
 
 export const user = writable<User | null>(null);
 
+const BASE_URL = "http://studapps.cg.helmo.be:5010/REST_DETI_EPPE";
+
 export function checkData(
   firstName: string,
   lastName: string,
@@ -42,21 +44,18 @@ export async function signUp(
   email: string,
   password: string
 ) {
-  const res = await fetch(
-    "http://studapps.cg.helmo.be:5010/REST_DETI_EPPE/auth/signup",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        password,
-      }),
-    }
-  );
+  const res = await fetch(`${BASE_URL}/auth/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      firstName,
+      lastName,
+      email,
+      password,
+    }),
+  });
 
   const json = await res.json();
 
@@ -72,13 +71,41 @@ export async function signUp(
   saveAuth();
 }
 
+export async function signIn(email: string, password: string) {
+  checkData("a", "b", email, password, password);
+
+  const res = await fetch(`${BASE_URL}/auth/signin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+
+  const json = await res.json();
+
+  if (json.errorMessage) {
+    throw new Error(json.errorMessage);
+  }
+
+  if (!res.ok) {
+    throw new Error("Une erreur inconnue est survenue lors de la connexion");
+  }
+
+  user.set(json as User);
+  saveAuth();
+}
+
 export function signOut() {
   user.set(null);
-  sessionStorage.clear();
+  localStorage.clear();
 }
 
 export function loadAuth() {
-  const userString = sessionStorage.getItem("user");
+  const userString = localStorage.getItem("user");
 
   if (userString) {
     const userValue = JSON.parse(userString) as User;
@@ -88,5 +115,5 @@ export function loadAuth() {
 
 function saveAuth() {
   const userValue = get(user);
-  sessionStorage.setItem("user", JSON.stringify(userValue));
+  localStorage.setItem("user", JSON.stringify(userValue));
 }

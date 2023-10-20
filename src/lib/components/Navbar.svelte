@@ -1,7 +1,6 @@
 <script>
   import { base } from "$app/paths";
-  import { signOut, user } from "$lib/auth";
-  import Button from "./Button.svelte";
+  import { user } from "$lib/auth";
   import NavLink from "./NavLink.svelte";
 
   let showLinks = false;
@@ -43,6 +42,7 @@
     {/if}
     {#if $user}
       <NavLink text="Mes vacances" url="{base}/periods" />
+      <NavLink text="Mon compte" url="{base}/account" />
     {/if}
     <NavLink text="Contact" url="{base}/contact" />
     {#if !$user}
@@ -54,9 +54,6 @@
           >S'inscrire</a
         >
       </li>
-    {/if}
-    {#if $user}
-      <Button text="Se déconnecter" on:click={signOut} />
     {/if}
   </ul>
 </nav>
