@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import { isEmailValid } from "./email";
 
 export interface User {
@@ -58,15 +58,35 @@ export async function signUp(
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Une erreur est survenue lors de l'inscription");
-  }
-
   const json = await res.json();
 
-  if (json.message) {
-    throw new Error(json.message);
+  if (json.errorMessage) {
+    throw new Error(json.errorMessage);
+  }
+
+  if (!res.ok) {
+    throw new Error("Une erreur inconnue est survenue lors de l'inscription");
   }
 
   user.set(json as User);
+  saveAuth();
+}
+
+export function signOut() {
+  user.set(null);
+  sessionStorage.clear();
+}
+
+export function loadAuth() {
+  const userString = sessionStorage.getItem("user");
+
+  if (userString) {
+    const userValue = JSON.parse(userString) as User;
+    user.set(userValue);
+  }
+}
+
+function saveAuth() {
+  const userValue = get(user);
+  sessionStorage.setItem("user", JSON.stringify(userValue));
 }

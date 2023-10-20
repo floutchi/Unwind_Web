@@ -13,7 +13,7 @@
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
       if (value) {
-        goto(base);
+        goto(`${base}/periods`);
       }
     });
 

@@ -1,10 +1,24 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import BeachFriends from "$lib/assets/beach_friends.jpg";
   import ChatBubble from "$lib/assets/chat_bubble.jpg";
   import Graph from "$lib/assets/graph.jpg";
+  import { user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import LandingSection from "$lib/components/LandingSection.svelte";
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    const unsubscribe = user.subscribe((value) => {
+      if (value) {
+        goto(`${base}/periods`);
+      }
+    });
+
+    return unsubscribe;
+  });
 
   function getStats() {
     console.log("Sumbitted!");

@@ -1,5 +1,7 @@
 <script>
   import { base } from "$app/paths";
+  import { signOut, user } from "$lib/auth";
+  import Button from "./Button.svelte";
   import NavLink from "./NavLink.svelte";
 
   let showLinks = false;
@@ -30,21 +32,31 @@
 
   <ul
     class:hidden={!showLinks}
-    class="fixed md:static flex md:flex flex-col md:flex-row gap-4 md:gap-10 p-10 md:p-0 top-4 right-4 shadow-xl md:shadow-none rounded-lg md:rounded-none bg-white md:bg-transparent"
+    class="fixed md:static flex md:flex flex-col md:flex-row md:items-center gap-4 md:gap-10 p-10 md:p-0 top-4 right-4 shadow-xl md:shadow-none rounded-lg md:rounded-none bg-white md:bg-transparent"
   >
     <button
       class="fixed top-7 right-7 md:hidden material-icons"
       on:click={closeLinks}>close</button
     >
-    <NavLink text="Accueil" url={base} />
+    {#if !$user}
+      <NavLink text="Accueil" url={base} />
+    {/if}
+    {#if $user}
+      <NavLink text="Mes vacances" url="{base}/periods" />
+    {/if}
     <NavLink text="Contact" url="{base}/contact" />
-    <NavLink text="Connexion" url="{base}/auth/sign-in" />
-    <li>
-      <a
-        href="{base}/auth/sign-up"
-        class="py-2 px-4 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-md hover:from-cyan-600 hover:to-teal-600"
-        >S'inscrire</a
-      >
-    </li>
+    {#if !$user}
+      <NavLink text="Connexion" url="{base}/auth/sign-in" />
+      <li>
+        <a
+          href="{base}/auth/sign-up"
+          class="py-2 px-4 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-md hover:from-cyan-600 hover:to-teal-600"
+          >S'inscrire</a
+        >
+      </li>
+    {/if}
+    {#if $user}
+      <Button text="Se déconnecter" on:click={signOut} />
+    {/if}
   </ul>
 </nav>
