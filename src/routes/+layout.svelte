@@ -4,7 +4,7 @@
   import { onMount } from "svelte";
   import "../app.css";
 
-  onMount(loadAuth);
+  onMount(async () => await loadAuth());
 </script>
 
 <div class="px-10 md:px-20 lg:px-40 min-h-screen bg-white font-lexend">

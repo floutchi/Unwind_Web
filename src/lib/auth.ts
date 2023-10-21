@@ -59,12 +59,8 @@ export async function signUp(
 
   const json = await res.json();
 
-  if (json.errorMessage) {
-    throw new Error(json.errorMessage);
-  }
-
   if (!res.ok) {
-    throw new Error("Une erreur inconnue est survenue lors de l'inscription");
+    throw new Error(json.errorMessage ?? "Une erreur inattendue est survenue");
   }
 
   user.set(json as User);
@@ -104,16 +100,35 @@ export function signOut() {
   localStorage.clear();
 }
 
-export function loadAuth() {
-  const userString = localStorage.getItem("user");
+export async function loadAuth() {
+  const token = localStorage.getItem("token");
 
-  if (userString) {
-    const userValue = JSON.parse(userString) as User;
+  if (token) {
+    console.log(token); // TODO: Remove this line when fixed
+    const userValue = await fetchUser(token);
     user.set(userValue);
   }
 }
 
+async function fetchUser(token: string): Promise<User> {
+  const res = await fetch(`${BASE_URL}/user/details`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(json.errorMessage ?? "Une erreur inattendue est survenue");
+  }
+
+  json.token = token;
+  return json as User;
+}
+
 function saveAuth() {
-  const userValue = get(user);
-  localStorage.setItem("user", JSON.stringify(userValue));
+  const userValue = get(user)!;
+  localStorage.setItem("token", JSON.stringify(userValue.token));
 }
