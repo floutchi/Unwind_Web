@@ -2,6 +2,7 @@
   export let title: string;
   export let name: string;
   export let type: string;
+  export let value: string = "";
   export let isRequired: boolean = false;
 </script>
 
@@ -11,6 +12,7 @@
     {type}
     {name}
     id={name}
+    {value}
     class="p-3 outline-none border-2 border-gray-200 focus:border-teal-500 rounded-md w-full"
     required={isRequired}
   />

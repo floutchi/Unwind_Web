@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { SelectOption } from "$lib/SelectOptionType";
+  import { user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
@@ -64,7 +65,13 @@
   <MessageCard {message} {isError} />
 {/if}
 <form on:submit|preventDefault={handleSubmit} class="py-4">
-  <Input title="Votre adresse e-mail" name="email" type="email" isRequired />
+  <Input
+    title="Votre adresse e-mail"
+    name="email"
+    type="email"
+    value={$user?.email}
+    isRequired
+  />
   <SelectInput title="Raison du message" name="reason" {options} isRequired />
   <TextArea title="Contenu du message" name="content" isRequired />
   <Button text="Envoyer" />

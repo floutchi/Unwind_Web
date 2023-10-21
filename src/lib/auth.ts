@@ -104,7 +104,6 @@ export async function loadAuth() {
   const token = localStorage.getItem("token");
 
   if (token) {
-    console.log(token); // TODO: Remove this line when fixed
     const userValue = await fetchUser(token);
     user.set(userValue);
   }
@@ -130,5 +129,5 @@ async function fetchUser(token: string): Promise<User> {
 
 function saveAuth() {
   const userValue = get(user)!;
-  localStorage.setItem("token", JSON.stringify(userValue.token));
+  localStorage.setItem("token", userValue.token);
 }
