@@ -3,6 +3,7 @@
   import { base } from "$app/paths";
   import { checkData, signUp, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
+  import GoogleButton from "$lib/components/GoogleButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
@@ -49,6 +50,11 @@
 {#if message !== ""}
   <MessageCard {message} isError />
 {/if}
+
+<div class="py-4">
+  <GoogleButton />
+</div>
+
 <form on:submit|preventDefault={handleSubmit} class="py-4">
   <Input title="Prénom" name="firstName" type="text" isRequired />
   <Input title="Nom" name="lastName" type="text" isRequired />

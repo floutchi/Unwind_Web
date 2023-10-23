@@ -3,6 +3,7 @@
   import { base } from "$app/paths";
   import { signIn, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
+  import GoogleButton from "$lib/components/GoogleButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
@@ -48,4 +49,7 @@
   <Input title="Adresse e-mail" name="email" type="email" isRequired />
   <Input title="Mot de passe" name="password" type="password" isRequired />
   <Button text="Se connecter" />
+  <div class="py-2">
+    <GoogleButton />
+  </div>
 </form>

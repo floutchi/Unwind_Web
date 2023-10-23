@@ -95,6 +95,25 @@ export async function signIn(email: string, password: string) {
   saveAuth();
 }
 
+export async function signInWithGoogle(response: any) {
+  const credential = response.credential;
+
+  const res = await fetch(`${BASE_URL}/auth/googlesignin`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      idToken: credential,
+    }),
+  });
+
+  if (res.ok) {
+    user.set({ firstName: "", lastName: "", email: "", token: credential });
+    saveAuth();
+  }
+}
+
 export function signOut() {
   user.set(null);
   localStorage.clear();
