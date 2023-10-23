@@ -10,7 +10,7 @@
     });
     google.accounts.id.renderButton(
       document.getElementById("buttonDiv"),
-      { theme: "outline", size: "large" } // customization attributes
+      { theme: "outline", shape: "pill", size: "large", text: "signup_with" } // customization attributes
     );
   });
 </script>
