@@ -108,8 +108,10 @@ export async function signInWithGoogle(response: any) {
     }),
   });
 
+  const json = await res.json();
+
   if (res.ok) {
-    user.set({ firstName: "", lastName: "", email: "", token: credential });
+    user.set(json);
     saveAuth();
   }
 }

@@ -49,7 +49,8 @@
   <Input title="Adresse e-mail" name="email" type="email" isRequired />
   <Input title="Mot de passe" name="password" type="password" isRequired />
   <Button text="Se connecter" />
-  <div class="py-2">
+
+  <div class="py-4 border-t-2 border-gray-200">
     <GoogleButton />
   </div>
 </form>

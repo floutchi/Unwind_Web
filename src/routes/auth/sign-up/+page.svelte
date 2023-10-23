@@ -51,7 +51,7 @@
   <MessageCard {message} isError />
 {/if}
 
-<div class="py-4">
+<div class="py-4 border-b-2 border-gray-200">
   <GoogleButton />
 </div>
 

@@ -42,7 +42,7 @@
     {/if}
     {#if $user}
       <NavLink text="Mes vacances" url="{base}/periods" />
-      <NavLink text="Mon compte" url="{base}/account" />
+      <NavLink text="Mon compte" url="{base}/auth/account" />
     {/if}
     <NavLink text="Contact" url="{base}/contact" />
     {#if !$user}
