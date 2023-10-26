@@ -71,6 +71,13 @@ export function checkData(
   if (!dateRe.test(start) || !dateRe.test(end)) {
     throw new Error("Format de la/des date(s) invalide");
   }
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  if (startDate > endDate) {
+    throw new Error("La date de début est plus tard que la date de fin");
+  }
 }
 
 export async function createPeriod(
