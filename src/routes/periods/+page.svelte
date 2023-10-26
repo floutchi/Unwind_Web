@@ -4,9 +4,10 @@
   import { user } from "$lib/auth";
   import Title from "$lib/components/Title.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
-  import { fakePeriods, fetchPeriods, type VacationPeriod } from "$lib/periods";
+  import { fetchPeriods, type VacationPeriod } from "$lib/periods";
   import { onMount } from "svelte";
   import PeriodList from "$lib/components/PeriodList.svelte";
+  import Fab from "$lib/components/FAB.svelte";
 
   let periodsPromise: Promise<VacationPeriod[]>;
 
@@ -34,8 +35,14 @@
       <Spinner />
     </div>
   {:then periods}
-    <PeriodList periods={fakePeriods} />
+    <PeriodList {periods} />
   {:catch err}
     <p class="text-center text-lg py-2 text-red-600">{err}</p>
   {/await}
 {/if}
+
+<Fab
+  icon="add"
+  title="Ajouter des vacances"
+  on:click={() => goto(`${base}/periods/new`)}
+/>

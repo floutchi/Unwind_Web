@@ -14,8 +14,13 @@
         period.startDateTime
       ).toLocaleDateString()} au {new Date(
         period.endDateTime
-      ).toLocaleDateString()}<br />{period.participants.length} participants"
+      ).toLocaleDateString()}<br />{period.participants.length} participant(s)"
       url="/periods/{period.idHoliday}"
     />
+  {:else}
+    <p class="py-2 text-lg">
+      Vous n'avez aucune période de vacances. Appuyez sur le bouton "+" pour en
+      créer une.
+    </p>
   {/each}
 </div>
