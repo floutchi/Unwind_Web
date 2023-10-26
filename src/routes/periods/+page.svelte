@@ -6,7 +6,7 @@
   import Spinner from "$lib/components/Spinner.svelte";
   import { fakePeriods, fetchPeriods, type VacationPeriod } from "$lib/periods";
   import { onMount } from "svelte";
-  import PeriodGrid from "$lib/components/PeriodGrid.svelte";
+  import PeriodList from "$lib/components/PeriodList.svelte";
 
   let periodsPromise: Promise<VacationPeriod[]>;
 
@@ -34,7 +34,7 @@
       <Spinner />
     </div>
   {:then periods}
-    <PeriodGrid periods={fakePeriods} />
+    <PeriodList periods={fakePeriods} />
   {:catch err}
     <p class="text-center text-lg py-2 text-red-600">{err}</p>
   {/await}

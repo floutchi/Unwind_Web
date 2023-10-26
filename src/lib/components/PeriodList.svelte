@@ -5,7 +5,7 @@
   export let periods: VacationPeriod[];
 </script>
 
-<div class="grid grid-cols-3 gap-4">
+<div class="flex flex-col gap-6 md:grid md:grid-cols-3 md:gap-4">
   {#each periods as period (period.idHoliday)}
     <Card
       title={period.name}
