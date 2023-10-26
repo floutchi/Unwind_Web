@@ -8,7 +8,10 @@
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import LandingSection from "$lib/components/LandingSection.svelte";
+  import { fetchTotalUsers } from "$lib/stats";
   import { onMount } from "svelte";
+
+  let totalUsers = 0;
 
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
@@ -16,6 +19,8 @@
         goto(`${base}/periods`);
       }
     });
+
+    fetchTotalUsers().then((v) => (totalUsers = v));
 
     return unsubscribe;
   });
@@ -54,7 +59,7 @@
 <div class="py-20 flex flex-col lg:flex-row lg:justify-between lg:items-center">
   <div class="lg:p-10">
     <h3 class="py-2 text-3xl">
-      Découvrez combien d'utilisateurs nous font déjà confiance !
+      {totalUsers} utilisateurs nous font déjà confiance !
     </h3>
     <p class="py-2 text-lg lg:text-xl">
       Unwind compte déjà une base d'utilisateurs solide. Découvrez combien de
