@@ -9,6 +9,7 @@ export interface User {
 }
 
 export const user = writable<User | null>(null);
+export const isLoading = writable(true);
 
 const BASE_URL = "http://studapps.cg.helmo.be:5010/REST_DETI_EPPE";
 
@@ -128,6 +129,8 @@ export async function loadAuth() {
     const userValue = await fetchUser(token);
     user.set(userValue);
   }
+
+  isLoading.set(false);
 }
 
 async function fetchUser(token: string): Promise<User> {

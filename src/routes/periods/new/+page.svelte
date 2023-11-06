@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import type { SelectOption } from "$lib/SelectOptionType";
+  import { isLoading, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
@@ -9,6 +10,26 @@
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
   import { checkData, createPeriod } from "$lib/periods";
+  import { onMount } from "svelte";
+
+  onMount(() => {
+    let userUnsubscribe: () => void;
+
+    const isLoadingUnsubscribe = isLoading.subscribe((loading) => {
+      if (!loading) {
+        userUnsubscribe = user.subscribe((u) => {
+          if (!u) {
+            goto(base);
+          }
+        });
+      }
+    });
+
+    return () => {
+      userUnsubscribe();
+      isLoadingUnsubscribe();
+    };
+  });
 
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { user } from "$lib/auth";
+  import { isLoading, user } from "$lib/auth";
   import Title from "$lib/components/Title.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
   import { fetchPeriods, type VacationPeriod } from "$lib/periods";
@@ -12,15 +12,24 @@
   let periodsPromise: Promise<VacationPeriod[]>;
 
   onMount(() => {
-    const unsubscribe = user.subscribe((value) => {
-      if (!value) {
-        goto(base);
-      } else {
-        periodsPromise = fetchPeriods(value.token);
+    let userUnsubscribe: () => void;
+
+    const isLoadingUnsubscribe = isLoading.subscribe((loading) => {
+      if (!loading) {
+        userUnsubscribe = user.subscribe((u) => {
+          if (!u) {
+            goto(base);
+          } else {
+            periodsPromise = fetchPeriods(u.token);
+          }
+        });
       }
     });
 
-    return unsubscribe;
+    return () => {
+      userUnsubscribe();
+      isLoadingUnsubscribe();
+    };
   });
 </script>
 
