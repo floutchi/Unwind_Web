@@ -8,10 +8,12 @@
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import LandingSection from "$lib/components/LandingSection.svelte";
-  import { fetchTotalUsers } from "$lib/stats";
+  import MessageCard from "$lib/components/MessageCard.svelte";
+  import { fetchTotalUsers, fetchUsersPerPeriod } from "$lib/stats";
   import { onMount } from "svelte";
 
   let totalUsers = 0;
+  let usersPerPeriod: number | null = null;
 
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
@@ -25,8 +27,14 @@
     return unsubscribe;
   });
 
-  function getStats() {
-    console.log("Sumbitted!");
+  async function getStats(event: SubmitEvent) {
+    const entries = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(entries);
+
+    const start = data.start as string;
+    const end = data.end as string;
+
+    usersPerPeriod = await fetchUsersPerPeriod(start, end);
   }
 </script>
 
@@ -65,6 +73,12 @@
       Unwind compte déjà une base d'utilisateurs solide. Découvrez combien de
       personne nous font confiance pour leurs vacances :
     </p>
+    {#if usersPerPeriod}
+      <MessageCard
+        message="Durant cette période, {usersPerPeriod} utilisateurs partent en vacances."
+        isError={false}
+      />
+    {/if}
     <form on:submit|preventDefault={getStats} class="py-4">
       <Input title="Date de début" name="start" type="date" />
       <Input title="Date de fin" name="end" type="date" />
