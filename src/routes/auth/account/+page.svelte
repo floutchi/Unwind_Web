@@ -1,29 +1,7 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { base } from "$app/paths";
-  import { isLoading, signOut, user } from "$lib/auth";
+  import { signOut, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Title from "$lib/components/Title.svelte";
-  import { onMount } from "svelte";
-
-  onMount(() => {
-    let userUnsubscribe: () => void;
-
-    const isLoadingUnsubscribe = isLoading.subscribe((loading) => {
-      if (!loading) {
-        userUnsubscribe = user.subscribe((u) => {
-          if (!u) {
-            goto(base);
-          }
-        });
-      }
-    });
-
-    return () => {
-      userUnsubscribe();
-      isLoadingUnsubscribe();
-    };
-  });
 </script>
 
 <svelte:head>
