@@ -18,7 +18,7 @@ export interface Place {
   zipCode: string;
 }
 
-const BASE_URL = "http://studapps.cg.helmo.be:5010/REST_DETI_EPPE";
+const BASE_URL = "https://studapps.cg.helmo.be:5011/REST_DETI_EPPE";
 
 export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
   const res = await fetch(`${BASE_URL}/holidayperiod/list`, {
