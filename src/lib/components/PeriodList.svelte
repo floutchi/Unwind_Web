@@ -9,7 +9,7 @@
   {#each periods as period (period.idHoliday)}
     <Card
       title={period.name}
-      subtitle={`${period.place.street} ${period.place.num}, ${period.place.country}`}
+      subtitle={`${period.place.street} ${period.place.num}, ${period.place.city}`}
       body="Du {new Date(
         period.startDateTime
       ).toLocaleDateString()} au {new Date(

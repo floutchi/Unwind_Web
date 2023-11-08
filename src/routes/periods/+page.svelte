@@ -11,12 +11,14 @@
 
   let periodsPromise: Promise<VacationPeriod[]>;
 
-  onMount(async () => {
-    user.subscribe((u) => {
+  onMount(() => {
+    const unsubscribe = user.subscribe((u) => {
       if (u) {
         periodsPromise = fetchPeriods(u.token);
       }
     });
+
+    return unsubscribe;
   });
 </script>
 

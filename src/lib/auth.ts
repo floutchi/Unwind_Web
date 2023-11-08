@@ -1,5 +1,6 @@
 import { get, writable } from "svelte/store";
 import { isEmailValid } from "./email";
+import { BASE_URL } from "./url";
 
 export interface User {
   firstName: string;
@@ -10,8 +11,6 @@ export interface User {
 
 export const user = writable<User | null>(null);
 export const isLoading = writable(true);
-
-const BASE_URL = "https://studapps.cg.helmo.be:5011/REST_DETI_EPPE";
 
 export function checkData(
   firstName: string,

@@ -1,4 +1,4 @@
-const BASE_URL = "https://studapps.cg.helmo.be:5011/REST_DETI_EPPE";
+import { BASE_URL } from "./url";
 
 export async function fetchTotalUsers(): Promise<number> {
   const res = await fetch(`${BASE_URL}/home/stats`);
