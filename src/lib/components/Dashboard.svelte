@@ -9,6 +9,11 @@
   let days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
 </script>
 
+<p class="text-lg">
+  Avec {period.participants
+    .map((p) => `${p.firstName} ${p.lastName}`)
+    .join(", ")}
+</p>
 <div class="grid grid-cols-2 gap-6">
   <!-- Place description -->
   <Card
@@ -26,6 +31,8 @@
   />
 
   <!-- Activities listing -->
+  <Card title="Activités prévues" subtitle="" body="" />
 
   <!-- Weather data -->
+  <Card title="Prévisions météo" subtitle="" body="" />
 </div>

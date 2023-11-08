@@ -3,7 +3,6 @@
 
   export let title: string;
   export let subtitle: string;
-  export let body: string;
   export let url: string = "";
 </script>
 
@@ -18,7 +17,5 @@
     {/if}
   </h3>
   <h5 class="py-2 text-lg">{subtitle}</h5>
-  {#if !body.includes("script")}
-    <p>{@html body}</p>
-  {/if}
+  <slot />
 </div>
