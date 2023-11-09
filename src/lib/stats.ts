@@ -18,7 +18,7 @@ export async function fetchUsersPerPeriod(
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(json.errorMessage ?? "Une erreur inconnue est survenue");
+    throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
 
   return json.totalUsersInHoliday;

@@ -117,7 +117,7 @@ export async function createPeriod(
 
   if (!res.ok) {
     const json = await res.json();
-    throw new Error(json.errorMessage ?? "Une erreur inconnue est survenue");
+    throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
 }
 
