@@ -139,3 +139,19 @@ export async function fetchPeriod(
   const json = await res.json();
   return json as VacationPeriod;
 }
+
+export async function inviteUser(email: string, periodId: string) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/adduser`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: email,
+  });
+
+  if (!res.ok) {
+    throw new Error(`Impossible d'inviter ${email}`);
+  }
+}
