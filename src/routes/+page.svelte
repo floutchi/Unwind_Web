@@ -13,7 +13,7 @@
   import { onMount } from "svelte";
 
   let totalUsers = 0;
-  let usersPerPeriod: number | null = null;
+  let usersPerPeriod: any | null = null;
 
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
@@ -74,10 +74,12 @@
       personne nous font confiance pour leurs vacances :
     </p>
     {#if usersPerPeriod}
-      <MessageCard
-        message="Durant cette période, {usersPerPeriod} utilisateurs partent en vacances."
-        isError={false}
-      />
+      {#each Object.entries(usersPerPeriod) as entry}
+        <MessageCard
+          message="{entry[1]} personnes partent en vacances en {entry[0]}"
+          isError={false}
+        />
+      {/each}
     {/if}
     <form on:submit|preventDefault={getStats} class="py-4">
       <Input title="Date de début" name="start" type="date" />
