@@ -60,7 +60,7 @@ export async function signUp(
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(json.errorMessage ?? "Une erreur inattendue est survenue");
+    throw new Error(json.error ?? "Une erreur inattendue est survenue");
   }
 
   user.set(json as User);
@@ -83,8 +83,8 @@ export async function signIn(email: string, password: string) {
 
   const json = await res.json();
 
-  if (json.errorMessage) {
-    throw new Error(json.errorMessage);
+  if (json.error) {
+    throw new Error(json.error);
   }
 
   if (!res.ok) {
@@ -143,7 +143,7 @@ async function fetchUser(token: string): Promise<User> {
   const json = await res.json();
 
   if (!res.ok) {
-    throw new Error(json.errorMessage ?? "Une erreur inattendue est survenue");
+    throw new Error(json.error ?? "Une erreur inattendue est survenue");
   }
 
   json.token = token;
