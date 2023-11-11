@@ -1,7 +1,7 @@
 ﻿/* SmtpJS.com - v3.0.0 */
 export const Email = {
   send: function (a: any) {
-    return new Promise(function (n, e) {
+    return new Promise<string>(function (n, e) {
       (a.nocache = Math.floor(1e6 * Math.random() + 1)), (a.Action = "Send");
       var t = JSON.stringify(a);
       Email.ajaxPost(
