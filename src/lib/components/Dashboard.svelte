@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import type { VacationPeriod } from "$lib/periods";
+  import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
 
@@ -39,7 +40,12 @@
   />
 
   <!-- Activities listing -->
-  <Card title="Activités prévues" subtitle="" />
+  <Card title="Activités prévues" subtitle="">
+    <Button
+      text="Ajouter"
+      on:click={() => goto(`${base}/periods/${period.idHoliday}/activity`)}
+    />
+  </Card>
 
   <!-- Weather data -->
   <Card title="Prévisions météo" subtitle="" />
