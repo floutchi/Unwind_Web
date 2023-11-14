@@ -1,15 +1,46 @@
-import { json } from "@sveltejs/kit";
 import { BASE_URL } from "./url";
+import Stomp from 'stompjs';
+import { user } from '$lib/auth';
+import { get } from 'svelte/store';
 
 export interface Message {
     content: string;
+    senderEmail: string;
     senderFirstName: string;
     senderLastName: string;
     dateTime: string;
 }
 
+export let stompClient: Stomp.Client;
+
+export function createConnection(userMail:string) {
+    const socket = new WebSocket('ws://localhost:8080/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+          console.log('Connected: ' + frame);
+          stompClient.subscribe(`/user/${userMail}/private`, function (message) {
+            console.log(message); //TODO
+          });
+        });
+}
+
+export function sendMessageToServer(message:string, periodId:string) {
+    if (stompClient && stompClient.connected) {
+        const u = get(user)!;
+        var chatmessage = {
+            senderMail : u.email,
+            content : message,
+            idHoliday : periodId
+        }
+        console.log(chatmessage);
+        stompClient.send('/app/message', {}, JSON.stringify(chatmessage));
+    } else {
+        console.error('WebSocket connection not established.');
+    }
+  }
+
 export async function fetchMessages(token: string, idHoliday: string): Promise<Message[]> {
-    const res = await fetch(`${BASE_URL}/tchat/${idHoliday}`, {
+    const res = await fetch(`http://localhost:8080/tchat/${idHoliday}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

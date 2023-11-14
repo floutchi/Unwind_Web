@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { sendMessageToServer } from "$lib/Tchat";
     import type { Message } from "$lib/messages";
+    import { user } from "$lib/auth";
     import { createEventDispatcher } from "svelte";
     import Button from "./Button.svelte";
     import TchatMessage from "./TchatMessage.svelte";
@@ -18,8 +18,9 @@
     }
 
     function parseDate(date: string): string {
-        return new Date(date).toLocaleDateString();
+        return new Date(date).toLocaleDateString() + " " + new Date(date).toLocaleTimeString();
     }
+
 </script>
 
 <div
@@ -29,8 +30,10 @@
         <div class="flex w-full mt-2 space-x-3 max-w-xs">
             {#each messages as message}
                 <TchatMessage
+                    name={message.senderFirstName + " " + message.senderLastName}
                     content={message.content}
                     dateTime={parseDate(message.dateTime)}
+                    isSender={message.senderEmail === $user?.email}
                 />
             {:else}
                 <p class="py-2 text-lg">Vous n'avez aucun message.</p>

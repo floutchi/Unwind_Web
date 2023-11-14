@@ -6,7 +6,7 @@
   import type { PageData } from "./$types";
   import Spinner from "$lib/components/Spinner.svelte";
   import MessageList from "$lib/components/MessageList.svelte";
-    import { createConnection, sendMessageToServer } from "$lib/Tchat";
+    import { createConnection, sendMessageToServer } from "$lib/messages";
 
   export let data: PageData;
 
@@ -16,9 +16,7 @@
 
     const unsubscribe = user.subscribe((u) => {
       if (u) {
-
         createConnection(u.email);
-
 
         messagesPromise = fetchMessages(u.token, data.id);
       }
