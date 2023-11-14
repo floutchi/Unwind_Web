@@ -5,6 +5,7 @@
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
+  import ListItem from "./ListItem.svelte";
 
   export let period: VacationPeriod;
 
@@ -40,11 +41,29 @@
   />
 
   <!-- Activities listing -->
-  <Card title="Activités prévues" subtitle="">
+  <Card
+    title="Activités prévues"
+    subtitle="La liste des activités prévues sur place"
+  >
     <Button
       text="Ajouter"
       on:click={() => goto(`${base}/periods/${period.idHoliday}/activity`)}
     />
+
+    <ul class="py-4">
+      {#each period.activities as activity}
+        <ListItem
+          title={activity.name}
+          subtitle={activity.start && activity.end
+            ? `${new Date(activity.start).toLocaleString()} - ${new Date(
+                activity.end
+              ).toLocaleDateString()}`
+            : "Non planifié"}
+          content="{activity.place.street} {activity.place.num}, {activity.place
+            .zipCode} {activity.place.city}"
+        />
+      {/each}
+    </ul>
   </Card>
 
   <!-- Weather data -->

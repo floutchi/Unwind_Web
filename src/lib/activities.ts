@@ -5,6 +5,8 @@ import { user } from "./auth";
 
 export interface Activity {
   name: string;
+  start: string;
+  end: string;
   place: Place;
 }
 
@@ -46,6 +48,8 @@ export async function createActivity(
   const token = get(user)!.token;
   const newActivity: Activity = {
     name,
+    start: "",
+    end: "",
     place: {
       street,
       num,
@@ -55,7 +59,7 @@ export async function createActivity(
     },
   };
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/addactivity`, {
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
