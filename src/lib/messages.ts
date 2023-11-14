@@ -1,4 +1,4 @@
-import { BASE_URL } from "./url";
+import { BASE_URL, BASE_URL_WS } from "./url";
 import Stomp from 'stompjs';
 import { user } from '$lib/auth';
 import { get } from 'svelte/store';
@@ -16,16 +16,22 @@ export let stompClient: Stomp.Client;
 
 export const chatMessages = writable<Message[]>([]);
 
-export function createConnection(userMail:string) {
-    const socket = new WebSocket('ws://localhost:8080/ws');
+export function createConnection(idHoliday:string) {
+    const socket = new WebSocket(BASE_URL_WS);
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
           console.log('Connected: ' + frame);
-          stompClient.subscribe(`/user/${userMail}/private`, function (message) {
+          stompClient.subscribe(`/user/${idHoliday}/private`, function (message) {
             const chatMessage : Message = JSON.parse(message.body);
             chatMessages.update((messages) => [...messages, chatMessage]);
           });
         });
+}
+
+export function closeConnection() {
+  if (stompClient && stompClient.connected) {
+    stompClient.disconnect(() => {});
+  }
 }
 
 export function sendMessageToServer(message:string, periodId:string) {
@@ -44,7 +50,7 @@ export function sendMessageToServer(message:string, periodId:string) {
   }
 
 export async function fetchMessages(token: string, idHoliday: string): Promise<Message[]> {
-    const res = await fetch(`http://localhost:8080/tchat/${idHoliday}`, {
+    const res = await fetch(`${BASE_URL}/tchat/${idHoliday}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

@@ -1,8 +1,8 @@
 <script lang="ts">
   import Title from "$lib/components/Title.svelte";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { user } from "$lib/auth";
-  import { chatMessages, fetchMessages, type Message } from "$lib/messages";
+  import { chatMessages, closeConnection, fetchMessages, type Message } from "$lib/messages";
   import type { PageData } from "./$types";
   import Spinner from "$lib/components/Spinner.svelte";
   import MessageList from "$lib/components/MessageList.svelte";
@@ -16,11 +16,15 @@
 
     const unsubscribe = user.subscribe((u) => {
       if (u) {
-        createConnection(u.email);
+        createConnection(data.id);
 
         messagesPromise = fetchMessages(u.token, data.id);
       }
     });
+  });
+
+  onDestroy(() => {
+    closeConnection();
   });
 
   function handleMessage(event: any) {
