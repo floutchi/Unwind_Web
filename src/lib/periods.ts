@@ -20,7 +20,7 @@ export interface Place {
 }
 
 export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
-  const res = await fetch(`${BASE_URL}/holidayperiod/list`, {
+  const res = await fetch(`${BASE_URL}/holidayperiod`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ export async function createPeriod(
 
   const token = get(user)!.token;
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/create`, {
+  const res = await fetch(`${BASE_URL}/holidayperiod`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

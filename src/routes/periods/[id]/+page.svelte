@@ -33,6 +33,7 @@
   {:then period}
     <Title text={period.name} />
     <Dashboard {period} />
+    
   {:catch}
     {goto(`${base}/periods`)}
   {/await}

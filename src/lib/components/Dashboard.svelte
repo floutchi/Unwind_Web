@@ -23,6 +23,11 @@
     title="Inviter des personnes"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/invite`)}
   />
+  <IconButton
+    icon="chat"
+    title="tchat"
+    on:click={() => goto(`${base}/periods/${period.idHoliday}/tchat`)}
+  />
 </div>
 <div class="grid grid-cols-2 gap-6">
   <!-- Place description -->
