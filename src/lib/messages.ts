@@ -2,6 +2,7 @@ import { BASE_URL } from "./url";
 import Stomp from 'stompjs';
 import { user } from '$lib/auth';
 import { get } from 'svelte/store';
+import { writable } from "svelte/store";
 
 export interface Message {
     content: string;
@@ -13,13 +14,16 @@ export interface Message {
 
 export let stompClient: Stomp.Client;
 
+export const chatMessages = writable<Message[]>([]);
+
 export function createConnection(userMail:string) {
     const socket = new WebSocket('ws://localhost:8080/ws');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
           console.log('Connected: ' + frame);
           stompClient.subscribe(`/user/${userMail}/private`, function (message) {
-            console.log(message); //TODO
+            const chatMessage : Message = JSON.parse(message.body);
+            chatMessages.update((messages) => [...messages, chatMessage]);
           });
         });
 }

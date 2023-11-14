@@ -24,10 +24,10 @@
 </script>
 
 <div
-    class="flex flex-col items-center justify-center w-[90%] min-h-screen bg-gray-100 text-gray-800 p-10"
+    class="flex flex-col items-center justify-center w-[90%] min-h-[75vh] bg-gray-100 text-gray-800 p-10"
 >
-    <div class="flex flex-col flex-grow h-0 p-4 overflow-auto">
-        <div class="flex w-full mt-2 space-x-3 max-w-xs">
+    <div class="flex flex-col w-full flex-grow h-0 p-4 overflow-auto">
+        <div class="flex-col w-full mt-2 space-x-3">
             {#each messages as message}
                 <TchatMessage
                     name={message.senderFirstName + " " + message.senderLastName}
