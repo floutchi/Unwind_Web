@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { user, type User } from "./auth";
 import { BASE_URL } from "./url";
+import type { Activity } from "./activities";
 
 export interface VacationPeriod {
   idHoliday: number;
@@ -9,6 +10,7 @@ export interface VacationPeriod {
   endDateTime: string;
   place: Place;
   participants: User[];
+  activities: Activity[];
 }
 
 export interface Place {
@@ -102,6 +104,7 @@ export async function createPeriod(
       country,
     },
     participants: [],
+    activities: [],
   };
 
   const token = get(user)!.token;
@@ -143,7 +146,7 @@ export async function fetchPeriod(
 export async function inviteUser(email: string, periodId: string) {
   const token = get(user)!.token;
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/adduser`, {
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/user`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

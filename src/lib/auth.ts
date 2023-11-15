@@ -125,8 +125,12 @@ export async function loadAuth() {
   const token = localStorage.getItem("token");
 
   if (token) {
-    const userValue = await fetchUser(token);
-    user.set(userValue);
+    try {
+      const userValue = await fetchUser(token);
+      user.set(userValue);
+    } catch (e: any) {
+      signOut();
+    }
   }
 
   isLoading.set(false);

@@ -10,7 +10,7 @@ export async function fetchTotalUsers(): Promise<number> {
 export async function fetchUsersPerPeriod(
   start: string,
   end: string
-): Promise<number> {
+): Promise<any> {
   const res = await fetch(
     `${BASE_URL}/home/statsdates?startDate=${start}&endDate=${end}`
   );
@@ -21,5 +21,5 @@ export async function fetchUsersPerPeriod(
     throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
 
-  return json.totalUsersInHoliday;
+  return json.usersInHolidayPerPlace;
 }
