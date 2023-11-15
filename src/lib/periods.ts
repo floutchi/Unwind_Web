@@ -124,6 +124,50 @@ export async function createPeriod(
   }
 }
 
+export async function editPeriod(
+  id: string,
+  name: string,
+  start: string,
+  end: string,
+  street: string,
+  num: number,
+  zip: string,
+  city: string,
+  country: string
+) {
+  const period: VacationPeriod = {
+    idHoliday: parseInt(id),
+    name,
+    startDateTime: new Date(start).toISOString(),
+    endDateTime: new Date(end).toISOString(),
+    place: {
+      street,
+      num,
+      zipCode: zip,
+      city,
+      country,
+    },
+    participants: [],
+    activities: [],
+  };
+
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(period),
+  });
+
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json.error ?? "Une erreur inconnue est survenue");
+  }
+}
+
 export async function fetchPeriod(
   id: string,
   userToken: string
