@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
+    import { base } from "$app/paths";
   import { signOut, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Title from "$lib/components/Title.svelte";
@@ -17,5 +19,6 @@
   <p class="py-2">
     <span class="font-semibold">Adresse e-mail</span> : {$user?.email}
   </p>
+  <Button text="Editer profil" on:click={() => goto(`${base}/auth/account/edit`)} />
   <Button text="Se déconnecter" on:click={signOut} />
 </div>

@@ -38,6 +38,30 @@ export function checkData(
   }
 }
 
+export function checkEditData(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  passwordConfirm: string
+) {
+  if (
+    firstName.trim() === "" ||
+    lastName.trim() === "" ||
+    email.trim() === ""
+  ) {
+    throw new Error("Veuillez remplir les champs requis");
+  }
+
+  if (!isEmailValid(email)) {
+    throw new Error("Le format de l'adresse e-mail est invalide");
+  }
+
+  if (password !== passwordConfirm) {
+    throw new Error("Le mot de passe est différent de sa confirmation");
+  }
+}
+
 export async function signUp(
   firstName: string,
   lastName: string,
@@ -119,6 +143,40 @@ export async function signInWithGoogle(response: any) {
 export function signOut() {
   user.set(null);
   localStorage.clear();
+}
+
+export async function editProfile(
+  firstName: string,
+  lastName: string,
+  email: string,
+  oldPassword: string,
+  newPassword: string,
+  token: string
+) {
+  const res = await fetch(`${BASE_URL}/user/details`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      firstName,
+      lastName,
+      email,
+      oldPassword,
+      newPassword
+    }),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    console.log(json);
+    throw new Error(json.error ?? "Une erreur inattendue est survenue");
+  }
+
+  user.set(json as User);
+  saveAuth();
 }
 
 export async function loadAuth() {
