@@ -20,7 +20,6 @@ export function createConnection(idHoliday:string) {
     const socket = new WebSocket(BASE_URL_WS);
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
-          console.log('Connected: ' + frame);
           stompClient.subscribe(`/user/${idHoliday}/private`, function (message) {
             const chatMessage : Message = JSON.parse(message.body);
             chatMessages.update((messages) => [...messages, chatMessage]);
