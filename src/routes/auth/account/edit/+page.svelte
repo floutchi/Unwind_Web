@@ -46,7 +46,7 @@
 </script>
 
 <svelte:head>
-    <title>Mon compte - Unwind</title>
+    <title>Editer mon compte - Unwind</title>
 </svelte:head>
 
 <Title text="Editer mon compte" />

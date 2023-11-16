@@ -58,7 +58,7 @@
 </script>
 
 <svelte:head>
-    <title>Inviter - Unwind</title>
+    <title>ISupprimer invitation - Unwind</title>
 </svelte:head>
 
 <Title text="Supprimer des personnes" />

@@ -77,7 +77,7 @@
 </script>
 
 <svelte:head>
-    <title>Nouvelles vacances - Unwind</title>
+    <title>Editer activité - Unwind</title>
 </svelte:head>
 
 {#if message}
