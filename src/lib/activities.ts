@@ -118,3 +118,20 @@ export async function editActivity(
     throw new Error(json.error ?? "Une erreur inattendue est survenue");
   }
 }
+
+export async function deleteActivity(periodId: string, activityId: string) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json.error ?? "Une erreur inattendue est survenue");
+  }
+}
