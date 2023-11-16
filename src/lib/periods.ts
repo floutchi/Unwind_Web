@@ -11,6 +11,7 @@ export interface VacationPeriod {
   place: Place;
   participants: User[];
   activities: Activity[];
+  weather?: Weather[];
 }
 
 export interface Place {
@@ -19,6 +20,13 @@ export interface Place {
   street: string;
   num: number;
   zipCode: string;
+}
+
+export interface Weather {
+  temperature: number;
+  weatherDesc: string;
+  date: string;
+  iconId: string;
 }
 
 export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
@@ -182,6 +190,8 @@ export async function fetchPeriod(
   if (!res.ok) {
     throw new Error("Une erreur inattendue est survenue");
   }
+
+  
 
   const json = await res.json();
   return json as VacationPeriod;

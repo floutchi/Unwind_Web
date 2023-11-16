@@ -8,6 +8,7 @@
   import IconButton from "./IconButton.svelte";
   import ListItem from "./ListItem.svelte";
   import Popup from "./Popup.svelte";
+  import WeatherSection from "./WeatherSection.svelte";
 
   export let period: VacationPeriod;
 
@@ -139,5 +140,5 @@
   {/if}
 
   <!-- Weather data -->
-  <Card title="Prévisions météo" subtitle="" />
+  <WeatherSection weather={period?.weather} />
 </div>
