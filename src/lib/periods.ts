@@ -215,7 +215,22 @@ export async function removeUser(email: string, periodId: string) {
   });
 
   if (!res.ok) {
-    throw new Error(`Impossible d'inviter ${email}`);
+    throw new Error(`Impossible de supprimer ${email}`);
+  }
+}
+
+export async function deletePeriod(periodId: string) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Impossible de supprimer la période`);
   }
 }
 

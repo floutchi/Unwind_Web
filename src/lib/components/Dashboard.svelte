@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { deleteActivity } from "$lib/activities";
-  import type { VacationPeriod } from "$lib/periods";
+  import { deletePeriod, type VacationPeriod } from "$lib/periods";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
@@ -17,6 +17,13 @@
 
   let showPop: boolean = false;
   let selectedId: number | null;
+  let isPeriod: boolean;
+
+  function deletePeriodConfirm() {
+    showPop = false;
+    deletePeriod(period.idHoliday.toString());
+    goto(`${base}/periods`);
+  }
 
   function deleteActivityConfirm() {
     showPop = false;
@@ -45,6 +52,15 @@
     icon="edit"
     title="Editer période de vacances"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/edit`)}
+  />
+
+  <IconButton
+    icon="delete"
+    title="Supprimer période de vacances"
+    on:click={() => {
+      showPop = true;
+      isPeriod = true;
+    }}
   />
 
   <IconButton
@@ -94,20 +110,33 @@
             goto(
               `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`
             )}
-          on:delete={() => {showPop = true; selectedId = activity.idActivity}}
+          on:delete={() => {
+            showPop = true;
+            selectedId = activity.idActivity;
+            isPeriod = false;
+          }}
         />
       {/each}
     </ul>
   </Card>
 
   {#if showPop}
-          <Popup
-            title="Supprimer l'activité"
-            body="Êtes-vous sûr de vouloir supprimer cette activité ?"
-            on:close={() => (showPop = false)}
-            on:confirm={() => deleteActivityConfirm()}
-          />
-        {/if}
+    {#if isPeriod}
+      <Popup
+        title="Supprimer la période de vacances"
+        body="Êtes-vous sûr de vouloir supprimer cette période de vacances ?"
+        on:close={() => (showPop = false)}
+        on:confirm={() => deletePeriodConfirm()}
+      />
+    {:else}
+      <Popup
+        title="Supprimer l'activité"
+        body="Êtes-vous sûr de vouloir supprimer cette activité ?"
+        on:close={() => (showPop = false)}
+        on:confirm={() => deleteActivityConfirm()}
+      />
+    {/if}
+  {/if}
 
   <!-- Weather data -->
   <Card title="Prévisions météo" subtitle="" />
