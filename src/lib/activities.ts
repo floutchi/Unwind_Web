@@ -4,9 +4,10 @@ import { BASE_URL } from "./url";
 import { user } from "./auth";
 
 export interface Activity {
+  idActivity?: number;
   name: string;
-  start: string;
-  end: string;
+  startDateTime: string,
+  endDateTime: string,
   place: Place;
 }
 
@@ -48,8 +49,8 @@ export async function createActivity(
   const token = get(user)!.token;
   const newActivity: Activity = {
     name,
-    start: "",
-    end: "",
+    startDateTime: "",
+    endDateTime: "",
     place: {
       street,
       num,
@@ -61,6 +62,50 @@ export async function createActivity(
 
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(newActivity),
+  });
+
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json.error ?? "Une erreur inattendue est survenue");
+  }
+}
+
+
+export async function editActivity(
+  name: string,
+  start: string,
+  end: string,
+  street: string,
+  num: number,
+  zip: string,
+  city: string,
+  country: string,
+  periodId: string,
+  activityId: string
+) {
+  const token = get(user)!.token;
+  const newActivity: Activity = {
+    name,
+    startDateTime: start,
+    endDateTime: end,
+    place: {
+      street,
+      num,
+      city,
+      zipCode: zip,
+      country,
+    },
+  };
+
+  console.log(JSON.stringify(newActivity));
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

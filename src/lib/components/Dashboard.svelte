@@ -71,13 +71,15 @@
       {#each period.activities as activity}
         <ListItem
           title={activity.name}
-          subtitle={activity.start && activity.end
-            ? `${new Date(activity.start).toLocaleString()} - ${new Date(
-                activity.end
-              ).toLocaleDateString()}`
+          subtitle={activity.startDateTime && activity.endDateTime
+            ? `${new Date(activity.startDateTime).toLocaleString()} - ${new Date(
+                activity.endDateTime
+              ).toLocaleString()}`
             : "Non planifié"}
           content="{activity.place.street} {activity.place.num}, {activity.place
             .zipCode} {activity.place.city}"
+            on:edit={() => goto(`${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`)}
+            on:delete={() => goto(`${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/delete`)}
         />
       {/each}
     </ul>
