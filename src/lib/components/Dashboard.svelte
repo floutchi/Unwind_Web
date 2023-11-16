@@ -30,13 +30,13 @@
     title="Inviter des personnes"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/remove`)}
   />
-  
+
   <IconButton
     icon="edit"
     title="Editer période de vacances"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/edit`)}
   />
-  
+
   <IconButton
     icon="chat"
     title="tchat"
@@ -72,14 +72,22 @@
         <ListItem
           title={activity.name}
           subtitle={activity.startDateTime && activity.endDateTime
-            ? `${new Date(activity.startDateTime).toLocaleString()} - ${new Date(
+            ? `${new Date(
+                activity.startDateTime
+              ).toLocaleString()} - ${new Date(
                 activity.endDateTime
               ).toLocaleString()}`
             : "Non planifié"}
           content="{activity.place.street} {activity.place.num}, {activity.place
             .zipCode} {activity.place.city}"
-            on:edit={() => goto(`${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`)}
-            on:delete={() => goto(`${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/delete`)}
+          on:edit={() =>
+            goto(
+              `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`
+            )}
+          on:delete={() =>
+            goto(
+              `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/delete`
+            )}
         />
       {/each}
     </ul>
