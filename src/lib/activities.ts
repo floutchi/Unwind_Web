@@ -4,7 +4,7 @@ import { BASE_URL } from "./url";
 import { user } from "./auth";
 
 export interface Activity {
-  idActivity?: number;
+  idActivity: number | null;
   name: string;
   startDateTime: string,
   endDateTime: string,
@@ -48,6 +48,7 @@ export async function createActivity(
 ) {
   const token = get(user)!.token;
   const newActivity: Activity = {
+    idActivity: null,
     name,
     startDateTime: "",
     endDateTime: "",
@@ -90,6 +91,7 @@ export async function editActivity(
 ) {
   const token = get(user)!.token;
   const newActivity: Activity = {
+    idActivity: null,
     name,
     startDateTime: start,
     endDateTime: end,

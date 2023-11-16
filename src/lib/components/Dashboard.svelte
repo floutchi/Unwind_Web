@@ -1,17 +1,27 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import { deleteActivity } from "$lib/activities";
   import type { VacationPeriod } from "$lib/periods";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
   import ListItem from "./ListItem.svelte";
+  import Popup from "./Popup.svelte";
 
   export let period: VacationPeriod;
 
   let start = new Date(period.startDateTime);
   let end = new Date(period.endDateTime);
   let days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+
+  let showPop: boolean = false;
+  let selectedId: number | null;
+
+  function deleteActivityConfirm() {
+    showPop = false;
+    deleteActivity(period.idHoliday.toString(), selectedId!.toString());
+  }
 </script>
 
 <div class="flex gap-2 items-center">
@@ -84,14 +94,20 @@
             goto(
               `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`
             )}
-          on:delete={() =>
-            goto(
-              `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/delete`
-            )}
+          on:delete={() => {showPop = true; selectedId = activity.idActivity}}
         />
       {/each}
     </ul>
   </Card>
+
+  {#if showPop}
+          <Popup
+            title="Supprimer l'activité"
+            body="Êtes-vous sûr de vouloir supprimer cette activité ?"
+            on:close={() => (showPop = false)}
+            on:confirm={() => deleteActivityConfirm()}
+          />
+        {/if}
 
   <!-- Weather data -->
   <Card title="Prévisions météo" subtitle="" />
