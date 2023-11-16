@@ -202,3 +202,21 @@ export async function inviteUser(email: string, periodId: string) {
     throw new Error(`Impossible d'inviter ${email}`);
   }
 }
+
+export async function removeUser(email: string, periodId: string) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/user`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: email,
+  });
+
+  if (!res.ok) {
+    throw new Error(`Impossible d'inviter ${email}`);
+  }
+}
+
+

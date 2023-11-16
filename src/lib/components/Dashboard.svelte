@@ -26,6 +26,12 @@
     on:click={() => goto(`${base}/periods/${period.idHoliday}/invite`)}
   />
   <IconButton
+    icon="group_remove"
+    title="Inviter des personnes"
+    on:click={() => goto(`${base}/periods/${period.idHoliday}/remove`)}
+  />
+  
+  <IconButton
     icon="edit"
     title="Editer période de vacances"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/edit`)}
