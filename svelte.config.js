@@ -14,7 +14,16 @@ const config = {
     adapter: adapter(),
 
     prerender: {
-      entries: ["*", "/periods/1", "/periods/1/invite"],
+      entries: [
+        "*",
+        "/periods/1",
+        "/periods/1/invite",
+        "/periods/1/activity",
+        "/periods/1/activity/1/edit",
+        "/periods/1/edit",
+        "/periods/1/remove",
+        "/periods/1/tchat",
+      ],
     },
 
     paths: {
