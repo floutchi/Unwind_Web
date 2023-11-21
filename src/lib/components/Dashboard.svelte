@@ -2,7 +2,11 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { deleteActivity } from "$lib/activities";
-  import { deletePeriod, downloadiCal, type VacationPeriod } from "$lib/periods";
+  import {
+    deletePeriod,
+    downloadiCal,
+    type VacationPeriod,
+  } from "$lib/periods";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
@@ -11,6 +15,40 @@
   import WeatherSection from "./WeatherSection.svelte";
 
   export let period: VacationPeriod;
+
+  $: activities = period.activities;
+  let ascending = true;
+
+
+  function order() {
+    ascending = !ascending;
+    if (ascending) {
+      activities = activities.sort((a, b) => {
+        if (a.startDateTime && b.startDateTime) {
+          return a.startDateTime.localeCompare(b.startDateTime);
+        } else if (a.startDateTime) {
+          return -1;
+        } else if (b.startDateTime) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    } else {
+      activities = activities.sort((a, b) => {
+        if (a.startDateTime && b.startDateTime) {
+          return b.startDateTime.localeCompare(a.startDateTime);
+        } else if (a.startDateTime) {
+          return 1;
+        } else if (b.startDateTime) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+    }
+    console.log(activities);
+  }
 
   let start = new Date(period.startDateTime);
   let end = new Date(period.endDateTime);
@@ -93,17 +131,15 @@
     title="Activités prévues"
     subtitle="La liste des activités prévues sur place"
   >
+    <IconButton icon="swap_vert" title="Trier" on:click={order}/>
     <Button
       text="Ajouter"
       on:click={() => goto(`${base}/periods/${period.idHoliday}/activity`)}
     />
-    <Button
-      text="Télécharger"
-      on:click={() => downloadCalendar()}
-    />
+    <Button text="Télécharger" on:click={downloadCalendar} />
 
     <ul class="py-4">
-      {#each period.activities as activity}
+      {#each activities as activity}
         <ListItem
           title={activity.name}
           subtitle={activity.startDateTime && activity.endDateTime
