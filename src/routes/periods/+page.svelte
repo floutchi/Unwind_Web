@@ -1,14 +1,10 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { base } from "$app/paths";
   import { user } from "$lib/auth";
   import Title from "$lib/components/Title.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
   import { fetchPeriods, type VacationPeriod } from "$lib/periods";
   import { onMount } from "svelte";
   import PeriodList from "$lib/components/PeriodList.svelte";
-  import Fab from "$lib/components/FAB.svelte";
-
   let periodsPromise: Promise<VacationPeriod[]>;
 
   onMount(() => {
@@ -20,6 +16,8 @@
 
     return unsubscribe;
   });
+
+
 </script>
 
 <svelte:head>
@@ -38,9 +36,3 @@
     <p class="text-center text-lg py-2 text-red-600">{err}</p>
   {/await}
 {/if}
-
-<Fab
-  icon="add"
-  title="Ajouter des vacances"
-  on:click={() => goto(`${base}/periods/new`)}
-/>
