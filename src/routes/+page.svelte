@@ -15,6 +15,8 @@
   let totalUsers = 0;
   let usersPerPeriod: any | null = null;
 
+  let fetchInterval: any = null;
+
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
       if (value) {
@@ -23,7 +25,7 @@
     });
 
     fetchTotalUsers().then((v) => (totalUsers = v));
-
+    
     setInterval(async () => {
       totalUsers = await fetchTotalUsers();
     }, 5000);
@@ -38,11 +40,12 @@
     const start = data.start as string;
     const end = data.end as string;
     usersPerPeriod = await fetchUsersPerPeriod(start, end);
+    clearInterval(fetchInterval);
     listenStats(start, end);
   }
 
   function listenStats(start: string, end: string) {
-    setInterval(async () => {
+    fetchInterval = setInterval(async () => {
       usersPerPeriod = await fetchUsersPerPeriod(start, end);
     }, 5000);
   }
@@ -87,6 +90,11 @@
       {#each Object.entries(usersPerPeriod) as entry}
         <MessageCard
           message="{entry[1]} personnes partent en vacances en {entry[0]}"
+          isError={false}
+        />
+      {:else}
+        <MessageCard
+          message="Aucun utilisateur n'est en vacances durant cette période"
           isError={false}
         />
       {/each}
