@@ -38,6 +38,7 @@
   }
 </script>
 
+{#if periods.length > 0}
 <div class="flex items-center">
   <div class="mr-4">
     <SelectInput title="Filtrer par pays" name="country" options={selectOptions}/>
@@ -45,8 +46,8 @@
   <div class="mt-7">
     <Button text="Filtrer" on:click={filter} />
   </div>
-  
 </div>
+{/if}
 <div class="flex flex-col gap-6 md:grid md:grid-cols-3 md:gap-4">
   {#each periods as period (period.idHoliday)}
     <Card
