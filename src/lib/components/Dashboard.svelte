@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import { deleteActivity } from "$lib/activities";
-  import { deletePeriod, type VacationPeriod } from "$lib/periods";
+  import { deletePeriod, downloadiCal, type VacationPeriod } from "$lib/periods";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
@@ -29,6 +29,10 @@
   function deleteActivityConfirm() {
     showPop = false;
     deleteActivity(period.idHoliday.toString(), selectedId!.toString());
+  }
+
+  function downloadCalendar() {
+    downloadiCal(period.idHoliday.toString(), period.name);
   }
 </script>
 
@@ -93,6 +97,10 @@
       text="Ajouter"
       on:click={() => goto(`${base}/periods/${period.idHoliday}/activity`)}
     />
+    <Button
+      text="Télécharger"
+      on:click={() => downloadCalendar()}
+    />
 
     <ul class="py-4">
       {#each period.activities as activity}
@@ -140,5 +148,5 @@
   {/if}
 
   <!-- Weather data -->
-  <WeatherSection weather={period?.weather} />
+  <WeatherSection weather={period.weather} />
 </div>

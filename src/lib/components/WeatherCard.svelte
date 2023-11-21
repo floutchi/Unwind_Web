@@ -9,5 +9,5 @@
     <p class="py-2 text-lg">{new Date(date).toLocaleDateString()}</p>
     <p class="text-3xl py-2">{temperature} °C</p>
     <p class="py-2 text-lg">{weatherDesc}</p>
-    <img src={`http://openweathermap.org/img/w/${iconId}.png`} />
+    <img src={`http://openweathermap.org/img/w/${iconId}.png`} alt="Weather Icon" />
 </div>

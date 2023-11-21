@@ -159,6 +159,8 @@ export async function editPeriod(
     activities: [],
   };
 
+  console.log(period);
+
   const token = get(user)!.token;
 
   const res = await fetch(`${BASE_URL}/holidayperiod/${id}`, {
@@ -191,7 +193,7 @@ export async function fetchPeriod(
     throw new Error("Une erreur inattendue est survenue");
   }
 
-  
+
 
   const json = await res.json();
   return json as VacationPeriod;
@@ -242,6 +244,36 @@ export async function deletePeriod(periodId: string) {
   if (!res.ok) {
     throw new Error(`Impossible de supprimer la période`);
   }
+}
+
+export async function downloadiCal(periodId: string, periodName: string) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/ical`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Impossible de télécharger le calendrier`);
+  }
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+
+  downloadLink.download = `${periodName}.ics`;
+
+  document.body.appendChild(downloadLink);
+  
+  downloadLink.click();
+  
+  document.body.removeChild(downloadLink);
+
+  window.URL.revokeObjectURL(url);
 }
 
 

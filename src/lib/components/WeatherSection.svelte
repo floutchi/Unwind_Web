@@ -7,7 +7,7 @@
 </script>
 
 <Card title="Prévisions météo" subtitle="">
-    {#if !weather}
+    {#if weather?.length === 0}
         <p class="text-gray-700 py-4">
             Les données météo ne sont pas encore disponibles
         </p>
