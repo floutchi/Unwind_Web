@@ -24,6 +24,10 @@
 
     fetchTotalUsers().then((v) => (totalUsers = v));
 
+    setInterval(async () => {
+      totalUsers = await fetchTotalUsers();
+    }, 5000);
+
     return unsubscribe;
   });
 
@@ -33,8 +37,14 @@
 
     const start = data.start as string;
     const end = data.end as string;
-
     usersPerPeriod = await fetchUsersPerPeriod(start, end);
+    listenStats(start, end);
+  }
+
+  function listenStats(start: string, end: string) {
+    setInterval(async () => {
+      usersPerPeriod = await fetchUsersPerPeriod(start, end);
+    }, 5000);
   }
 </script>
 

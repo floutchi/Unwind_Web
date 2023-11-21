@@ -11,12 +11,37 @@
 
   let message = "";
 
+  let signInTry = 0;
+  let canSignIn = true;
+
+  let globalSignInTime: string = Date.now().toString();
+
+  function signInMessage() {
+    message =
+      "Vous avez essayé de vous connecter 5 fois avec des identifiants incorrects. Veuillez réessayer dans 1 minute.";
+    canSignIn = false;
+    localStorage.setItem("SignInTime", (Date.now() + 60000).toString());
+    globalSignInTime = (Date.now() + 60000).toString();
+    setTimeout(() => {
+      signInTry = 0;
+      canSignIn = true;
+    }, 60000);
+  }
+
   onMount(() => {
     const unsubscribe = user.subscribe((value) => {
       if (value) {
         goto(`${base}/periods`);
       }
     });
+
+    let SignInTime = localStorage.getItem("SignInTime");
+    if (SignInTime) {
+      globalSignInTime = SignInTime;
+      if (Date.now() < parseInt(SignInTime)) {
+        signInMessage();
+      }
+    }
 
     return unsubscribe;
   });
@@ -30,9 +55,24 @@
     const password = data.password as string;
 
     try {
-      await signIn(email, password);
+      console.log(canSignIn);
+      console.log(Date.now());
+      console.log(globalSignInTime);
+      if ((canSignIn && Date.now() > parseInt(globalSignInTime))) {
+        console.log(Date.now());
+        console.log(globalSignInTime);
+        await signIn(email, password);
+      } else {
+        signInMessage();
+      }
     } catch (e: any) {
       message = e.message;
+      if (message == "Email ou mot de passe incorect.") {
+        signInTry++;
+        if (signInTry == 5) {
+          signInMessage();
+        }
+      }
     }
   }
 </script>
