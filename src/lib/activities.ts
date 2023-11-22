@@ -103,8 +103,6 @@ export async function editActivity(
     },
   };
 
-  console.log(JSON.stringify(newActivity));
-
   const res = await fetch(
     `${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`,
     {
