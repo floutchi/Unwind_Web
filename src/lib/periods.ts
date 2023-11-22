@@ -2,6 +2,8 @@ import { get } from "svelte/store";
 import { user, type User } from "./auth";
 import { BASE_URL } from "./url";
 import type { Activity } from "./activities";
+import type { Place } from "./place";
+import type { Weather } from "./weather";
 
 export interface VacationPeriod {
   idHoliday: number;
@@ -12,21 +14,6 @@ export interface VacationPeriod {
   participants: User[];
   activities: Activity[];
   weather?: Weather[];
-}
-
-export interface Place {
-  country: string;
-  city: string;
-  street: string;
-  num: number;
-  zipCode: string;
-}
-
-export interface Weather {
-  temperature: number;
-  weatherDesc: string;
-  date: string;
-  iconId: string;
 }
 
 export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
@@ -193,8 +180,6 @@ export async function fetchPeriod(
     throw new Error("Une erreur inattendue est survenue");
   }
 
-
-
   const json = await res.json();
   return json as VacationPeriod;
 }
@@ -262,18 +247,16 @@ export async function downloadiCal(periodId: string, periodName: string) {
 
   const blob = await res.blob();
   const url = window.URL.createObjectURL(blob);
-  const downloadLink = document.createElement('a');
+  const downloadLink = document.createElement("a");
   downloadLink.href = url;
 
   downloadLink.download = `${periodName}.ics`;
 
   document.body.appendChild(downloadLink);
-  
+
   downloadLink.click();
-  
+
   document.body.removeChild(downloadLink);
 
   window.URL.revokeObjectURL(url);
 }
-
-

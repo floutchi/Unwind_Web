@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import Button from "$lib/components/Button.svelte";
-  import IconButton from "$lib/components/IconButton.svelte";
+  import Chip from "$lib/components/Chip.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
@@ -69,14 +69,7 @@
 </form>
 <div class="flex gap-2 w-[75%] overflow-hidden overflow-x-scroll py-2">
   {#each users as user}
-    <div class="flex items-center bg-gray-200 rounded-full p-3 my-2">
-      <p>{user}</p>
-      <IconButton
-        icon="close"
-        title="Supprimer"
-        on:click={() => removeUser(user)}
-      />
-    </div>
+    <Chip text={user} isRed={false} on:click={() => removeUser(user)} />
   {/each}
 </div>
 <div class="h-10" />
