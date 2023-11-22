@@ -6,7 +6,7 @@
   export let url: string = "";
 </script>
 
-<div class="shadow-xl rounded-lg p-10">
+<div class="shadow-xl rounded-lg p-10 w-[100%]">
   <h3 class="text-3xl py-2">
     {#if url !== ""}
       <a href="{base}{url}" class="hover:text-teal-600 hover:underline"

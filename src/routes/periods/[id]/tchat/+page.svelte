@@ -13,7 +13,7 @@
     const unsubscribe = user.subscribe((u) => {
       if (u) {
         createConnection(data.id);
-        fetchMessages(u.token, data.id).then(() => console.log("Fetched!"));
+        fetchMessages(u.token, data.id);
       }
     });
 
@@ -24,7 +24,7 @@
   });
 
   function handleMessage(event: any) {
-    let message = event.detail.content;
+    let message = event.detail.content as string;
     if (message.trim() === "") return;
     sendMessageToServer(message, data.id);
   }

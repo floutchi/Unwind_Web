@@ -48,7 +48,7 @@
     <input
       class="h-10 w-[90%] rounded px-3 text-sm"
       type="text"
-      placeholder="Type your message…"
+      placeholder="Message..."
       bind:value={content}
     />
     <Button text="Envoyer" />
