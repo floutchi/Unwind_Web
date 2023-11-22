@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import { base } from "$app/paths";
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
   import type { SelectOption } from "$lib/SelectOptionType";
   import type { VacationPeriod } from "$lib/periods";
   import Button from "./Button.svelte";
-    import ButtonCard from "./ButtonCard.svelte";
+  import ButtonCard from "./ButtonCard.svelte";
   import Card from "./Card.svelte";
   import SelectInput from "./SelectInput.svelte";
 
@@ -12,23 +12,29 @@
 
   let hidedPeriods: VacationPeriod[] = periods;
 
-  let countries = periods.map((period) => period.place.country);
+  let countries = periods
+    .map((period) => period.place.country)
+    .filter((v, i, arr) => !arr.includes(v, i + 1))
+    .sort();
 
   let selectOptions: SelectOption[] = countries.map((country) => ({
     value: country,
-    label: country,
     name: country,
   }));
-  selectOptions.push({ value: "Tous", label: "Tous", name: "Tous" } as SelectOption);
+  selectOptions.push({
+    value: "Tous",
+    name: "Tous",
+  });
 
-  function filter() {
-    let country = (document.querySelector(
-      "select[name=country]"
-    ) as HTMLSelectElement).value;
-    if (country === "Tous") {
-      periods = hidedPeriods;
-    } else {
-      periods = hidedPeriods;
+  function filter(event: SubmitEvent) {
+    const entries = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(entries);
+
+    let country = data.country as string;
+
+    periods = hidedPeriods;
+
+    if (country !== "Tous") {
       periods = periods.filter((period) => period.place.country === country);
     }
   }
@@ -39,14 +45,14 @@
 </script>
 
 {#if periods.length > 0}
-<div class="flex items-center">
-  <div class="mr-4">
-    <SelectInput title="Filtrer par pays" name="country" options={selectOptions}/>
-  </div>
-  <div class="mt-7">
-    <Button text="Filtrer" on:click={filter} />
-  </div>
-</div>
+  <form on:submit|preventDefault={filter} class="flex gap-4 items-center w-fit">
+    <SelectInput
+      title="Filtrer par pays"
+      name="country"
+      options={selectOptions}
+    />
+    <Button text="Filtrer" />
+  </form>
 {/if}
 <div class="flex flex-col gap-6 md:grid md:grid-cols-3 md:gap-4">
   {#each periods as period (period.idHoliday)}
@@ -71,5 +77,5 @@
     title="Ajouter des vacances"
     icon="add"
     on:click={() => goto(`${base}/periods/new`)}
-    />
+  />
 </div>
