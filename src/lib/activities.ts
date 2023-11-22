@@ -1,13 +1,13 @@
 import { get } from "svelte/store";
-import type { Place } from "./periods";
+import type { Place } from "./place";
 import { BASE_URL } from "./url";
 import { user } from "./auth";
 
 export interface Activity {
   idActivity: number | null;
   name: string;
-  startDateTime: string,
-  endDateTime: string,
+  startDateTime: string;
+  endDateTime: string;
   place: Place;
 }
 
@@ -76,7 +76,6 @@ export async function createActivity(
   }
 }
 
-
 export async function editActivity(
   name: string,
   start: string,
@@ -106,14 +105,17 @@ export async function editActivity(
 
   console.log(JSON.stringify(newActivity));
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(newActivity),
-  });
+  const res = await fetch(
+    `${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newActivity),
+    }
+  );
 
   if (!res.ok) {
     const json = await res.json();
@@ -121,16 +123,19 @@ export async function editActivity(
   }
 }
 
-export async function deleteActivity(periodId: string, activityId: string) {
+export async function deleteActivity(periodId: number, activityId: string) {
   const token = get(user)!.token;
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    `${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   if (!res.ok) {
     const json = await res.json();

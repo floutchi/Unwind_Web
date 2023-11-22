@@ -216,7 +216,7 @@ export async function removeUser(email: string, periodId: string) {
   }
 }
 
-export async function deletePeriod(periodId: string) {
+export async function deletePeriod(periodId: number) {
   const token = get(user)!.token;
 
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
@@ -231,7 +231,7 @@ export async function deletePeriod(periodId: string) {
   }
 }
 
-export async function downloadiCal(periodId: string, periodName: string) {
+export async function downloadiCal(periodId: number): Promise<Blob> {
   const token = get(user)!.token;
 
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/ical`, {
@@ -245,18 +245,5 @@ export async function downloadiCal(periodId: string, periodName: string) {
     throw new Error(`Impossible de télécharger le calendrier`);
   }
 
-  const blob = await res.blob();
-  const url = window.URL.createObjectURL(blob);
-  const downloadLink = document.createElement("a");
-  downloadLink.href = url;
-
-  downloadLink.download = `${periodName}.ics`;
-
-  document.body.appendChild(downloadLink);
-
-  downloadLink.click();
-
-  document.body.removeChild(downloadLink);
-
-  window.URL.revokeObjectURL(url);
+  return res.blob();
 }

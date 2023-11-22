@@ -1,76 +1,44 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { deleteActivity } from "$lib/activities";
   import {
     deletePeriod,
     downloadiCal,
     type VacationPeriod,
   } from "$lib/periods";
-  import Button from "./Button.svelte";
+  import ActivitySection from "./ActivitySection.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
-  import ListItem from "./ListItem.svelte";
   import Popup from "./Popup.svelte";
   import WeatherSection from "./WeatherSection.svelte";
 
   export let period: VacationPeriod;
 
-  $: activities = period.activities;
-  let ascending = true;
-
-
-  function order() {
-    ascending = !ascending;
-    if (ascending) {
-      activities = activities.sort((a, b) => {
-        if (a.startDateTime && b.startDateTime) {
-          return a.startDateTime.localeCompare(b.startDateTime);
-        } else if (a.startDateTime) {
-          return -1;
-        } else if (b.startDateTime) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-    } else {
-      activities = activities.sort((a, b) => {
-        if (a.startDateTime && b.startDateTime) {
-          return b.startDateTime.localeCompare(a.startDateTime);
-        } else if (a.startDateTime) {
-          return 1;
-        } else if (b.startDateTime) {
-          return -1;
-        } else {
-          return 0;
-        }
-      });
-    }
-    console.log(activities);
-  }
-
   let start = new Date(period.startDateTime);
   let end = new Date(period.endDateTime);
   let days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
 
-  let showPop: boolean = false;
-  let selectedId: number | null;
-  let isPeriod: boolean;
+  let showPop = false;
 
   function deletePeriodConfirm() {
     showPop = false;
-    deletePeriod(period.idHoliday.toString());
+    deletePeriod(period.idHoliday);
     goto(`${base}/periods`);
   }
 
-  function deleteActivityConfirm() {
-    showPop = false;
-    deleteActivity(period.idHoliday.toString(), selectedId!.toString());
-  }
+  async function downloadCalendar() {
+    const blob = await downloadiCal(period.idHoliday);
 
-  function downloadCalendar() {
-    downloadiCal(period.idHoliday.toString(), period.name);
+    const url = window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = url;
+
+    downloadLink.download = `${period.name}.ics`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    document.body.removeChild(downloadLink);
+    window.URL.revokeObjectURL(url);
   }
 </script>
 
@@ -93,17 +61,14 @@
 
   <IconButton
     icon="edit"
-    title="Editer période de vacances"
+    title="Editer la période de vacances"
     on:click={() => goto(`${base}/periods/${period.idHoliday}/edit`)}
   />
 
   <IconButton
     icon="delete"
-    title="Supprimer période de vacances"
-    on:click={() => {
-      showPop = true;
-      isPeriod = true;
-    }}
+    title="Supprimer la période de vacances"
+    on:click={() => (showPop = true)}
   />
 
   <IconButton
@@ -131,58 +96,27 @@
     title="Activités prévues"
     subtitle="La liste des activités prévues sur place"
   >
-    <IconButton icon="swap_vert" title="Trier" on:click={order}/>
-    <Button
-      text="Ajouter"
-      on:click={() => goto(`${base}/periods/${period.idHoliday}/activity`)}
+    <ActivitySection
+      activities={period.activities}
+      periodId={period.idHoliday}
+      on:download={downloadCalendar}
     />
-    <Button text="Télécharger" on:click={downloadCalendar} />
+  </Card>
 
-    <ul class="py-4">
-      {#each activities as activity}
-        <ListItem
-          title={activity.name}
-          subtitle={activity.startDateTime && activity.endDateTime
-            ? `${new Date(
-                activity.startDateTime
-              ).toLocaleString()} - ${new Date(
-                activity.endDateTime
-              ).toLocaleString()}`
-            : "Non planifié"}
-          content="{activity.place.street} {activity.place.num}, {activity.place
-            .zipCode} {activity.place.city}"
-          on:edit={() =>
-            goto(
-              `${base}/periods/${period.idHoliday}/activity/${activity.idActivity}/edit`
-            )}
-          on:delete={() => {
-            showPop = true;
-            selectedId = activity.idActivity;
-            isPeriod = false;
-          }}
-        />
-      {/each}
-    </ul>
+  <!-- Weather data -->
+  <Card
+    title="Prévisions météo"
+    subtitle="Les prévisions météorologiques sur place"
+  >
+    <WeatherSection weather={period.weather} />
   </Card>
 
   {#if showPop}
-    {#if isPeriod}
-      <Popup
-        title="Supprimer la période de vacances"
-        body="Êtes-vous sûr de vouloir supprimer cette période de vacances ?"
-        on:close={() => (showPop = false)}
-        on:confirm={() => deletePeriodConfirm()}
-      />
-    {:else}
-      <Popup
-        title="Supprimer l'activité"
-        body="Êtes-vous sûr de vouloir supprimer cette activité ?"
-        on:close={() => (showPop = false)}
-        on:confirm={() => deleteActivityConfirm()}
-      />
-    {/if}
+    <Popup
+      title="Supprimer la période de vacances"
+      body="Êtes-vous sûr de vouloir supprimer cette période de vacances ?"
+      on:close={() => (showPop = false)}
+      on:confirm={() => deletePeriodConfirm()}
+    />
   {/if}
-
-  <!-- Weather data -->
-  <WeatherSection weather={period.weather} />
 </div>
