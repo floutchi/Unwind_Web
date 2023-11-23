@@ -49,10 +49,8 @@ export function sendMessageToServer(message: string, periodId: string) {
   }
 }
 
-export async function fetchMessages(
-  token: string,
-  idHoliday: string
-): Promise<void> {
+export async function fetchMessages(idHoliday: string) {
+  const token = get(user)!.token;
   const res = await fetch(`${BASE_URL}/tchat/${idHoliday}`, {
     headers: {
       "Content-Type": "application/json",

@@ -1,9 +1,10 @@
-import { get } from "svelte/store";
+import { get, writable } from "svelte/store";
 import { user, type User } from "./auth";
 import { BASE_URL } from "./url";
 import type { Activity } from "./activities";
 import type { Place } from "./place";
 import type { Weather } from "./weather";
+import type { PeriodStore } from "./PeriodStoreType";
 
 export interface VacationPeriod {
   idHoliday: number;
@@ -13,10 +14,103 @@ export interface VacationPeriod {
   place: Place;
   participants: User[];
   activities: Activity[];
-  weather?: Weather[];
+  weather: Weather[] | null;
 }
 
-export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
+export function createPeriodStore(): PeriodStore {
+  const store = writable<VacationPeriod[]>([]);
+  const { subscribe, set, update } = store;
+
+  return {
+    subscribe,
+    getPeriod: (periodId: number): VacationPeriod =>
+      get(store)!.find((period) => period.idHoliday === periodId)!,
+    fetch: async () => {
+      const periods = await _fetchPeriods();
+      set(periods);
+    },
+    fetchPeriod: async (periodId: number): Promise<VacationPeriod> => {
+      let period = get(store).find((period) => period.idHoliday === periodId);
+
+      if (period && period.weather) return period;
+
+      if (!period) {
+        const newPeriod = await _fetchPeriod(periodId);
+        update((periods) => [...periods, newPeriod]);
+        return newPeriod;
+      }
+
+      period.weather = (await _fetchPeriod(periodId)).weather;
+      update((periods) => {
+        periods[periods.findIndex((p) => p.idHoliday === period!.idHoliday)] =
+          period!;
+        return periods;
+      });
+      return period;
+    },
+    create: async (
+      name: string,
+      start: string,
+      end: string,
+      street: string,
+      num: number,
+      zip: string,
+      city: string,
+      country: string
+    ) => {
+      const period = await _createPeriod(
+        name,
+        start,
+        end,
+        street,
+        num,
+        zip,
+        city,
+        country
+      );
+      update((periods) => [...periods, period]);
+    },
+    delete: async (periodId: number) => {
+      await _deletePeriod(periodId);
+      update((periods) =>
+        periods.filter((period) => period.idHoliday !== periodId)
+      );
+    },
+    edit: async (
+      periodId: number,
+      name: string,
+      start: string,
+      end: string,
+      street: string,
+      num: number,
+      zip: string,
+      city: string,
+      country: string
+    ) => {
+      const period = await _editPeriod(
+        periodId,
+        name,
+        start,
+        end,
+        street,
+        num,
+        zip,
+        city,
+        country
+      );
+      update((periods) => {
+        periods[periods.findIndex((period) => period.idHoliday === periodId)] =
+          period;
+        return periods;
+      });
+    },
+  };
+}
+
+export const periods = createPeriodStore();
+
+async function _fetchPeriods(): Promise<VacationPeriod[]> {
+  const token = get(user)!.token;
   const res = await fetch(`${BASE_URL}/holidayperiod`, {
     headers: {
       "Content-Type": "application/json",
@@ -32,6 +126,23 @@ export async function fetchPeriods(token: string): Promise<VacationPeriod[]> {
   throw new Error(
     "Une erreur est survenue lors de la récupération de vos périodes de vacances"
   );
+}
+
+async function _fetchPeriod(periodId: number): Promise<VacationPeriod> {
+  const token = get(user)!.token;
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Une erreur inattendue est survenue");
+  }
+
+  const json = await res.json();
+  return json as VacationPeriod;
 }
 
 const numRe = /^\d+$/;
@@ -76,7 +187,7 @@ export function checkData(
   }
 }
 
-export async function createPeriod(
+async function _createPeriod(
   name: string,
   start: string,
   end: string,
@@ -85,7 +196,7 @@ export async function createPeriod(
   zip: string,
   city: string,
   country: string
-) {
+): Promise<VacationPeriod> {
   const period: VacationPeriod = {
     idHoliday: 0,
     name,
@@ -100,6 +211,7 @@ export async function createPeriod(
     },
     participants: [],
     activities: [],
+    weather: null,
   };
 
   const token = get(user)!.token;
@@ -117,10 +229,27 @@ export async function createPeriod(
     const json = await res.json();
     throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
+
+  return period;
 }
 
-export async function editPeriod(
-  id: string,
+async function _deletePeriod(periodId: number) {
+  const token = get(user)!.token;
+
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Impossible de supprimer la période`);
+  }
+}
+
+async function _editPeriod(
+  periodId: number,
   name: string,
   start: string,
   end: string,
@@ -129,9 +258,9 @@ export async function editPeriod(
   zip: string,
   city: string,
   country: string
-) {
+): Promise<VacationPeriod> {
   const period: VacationPeriod = {
-    idHoliday: parseInt(id),
+    idHoliday: periodId,
     name,
     startDateTime: new Date(start).toISOString(),
     endDateTime: new Date(end).toISOString(),
@@ -144,13 +273,14 @@ export async function editPeriod(
     },
     participants: [],
     activities: [],
+    weather: null,
   };
 
   console.log(period);
 
   const token = get(user)!.token;
 
-  const res = await fetch(`${BASE_URL}/holidayperiod/${id}`, {
+  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -163,25 +293,8 @@ export async function editPeriod(
     const json = await res.json();
     throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
-}
 
-export async function fetchPeriod(
-  id: string,
-  userToken: string
-): Promise<VacationPeriod> {
-  const res = await fetch(`${BASE_URL}/holidayperiod/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${userToken}`,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("Une erreur inattendue est survenue");
-  }
-
-  const json = await res.json();
-  return json as VacationPeriod;
+  return period;
 }
 
 export async function inviteUser(email: string, periodId: string) {
@@ -213,21 +326,6 @@ export async function removeUser(email: string, periodId: string) {
 
   if (!res.ok) {
     throw new Error(`Impossible de supprimer ${email}`);
-  }
-}
-
-export async function deletePeriod(periodId: number) {
-  const token = get(user)!.token;
-
-  const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Impossible de supprimer la période`);
   }
 }
 

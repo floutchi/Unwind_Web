@@ -2,14 +2,13 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import Button from "$lib/components/Button.svelte";
-  import IconButton from "$lib/components/IconButton.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
-  import { fetchPeriod, removeUser } from "$lib/periods";
-  import { onMount } from "svelte";
+  import { periods, removeUser } from "$lib/periods";
   import type { PageData } from "./$types";
-  import { user } from "$lib/auth";
   import Chip from "$lib/components/Chip.svelte";
+  import { onMount } from "svelte";
+  import { user } from "$lib/auth";
 
   export let data: PageData;
   let users: string[] = [];
@@ -17,10 +16,11 @@
   let message = "";
 
   onMount(() => {
-    const unsubscribe = user.subscribe(async (u) => {
+    const unsubscribe = user.subscribe((u) => {
       if (u) {
-        const period = await fetchPeriod(data.id, u.token);
-        users = period.participants.map((u) => u.email);
+        users = periods
+          .getPeriod(parseInt(data.id))
+          .participants.map((p) => p.email);
       }
     });
 

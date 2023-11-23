@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { onMount } from "svelte";
   import type { PageData } from "./$types";
   import type { SelectOption } from "$lib/SelectOptionType";
   import Button from "$lib/components/Button.svelte";
@@ -10,33 +9,28 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
-  import {
-    checkData,
-    editPeriod,
-    fetchPeriod,
-    type VacationPeriod,
-  } from "$lib/periods";
+  import { checkData, periods, type VacationPeriod } from "$lib/periods";
+  import { onMount } from "svelte";
   import { user } from "$lib/auth";
-  import Spinner from "$lib/components/Spinner.svelte";
 
   export let data: PageData;
-  let periodPromise: Promise<VacationPeriod>;
-
-  onMount(() => {
-    const unsubscribe = user.subscribe((u) => {
-      if (u) {
-        periodPromise = fetchPeriod(data.id, u.token);
-      }
-    });
-
-    return unsubscribe;
-  });
+  let period: VacationPeriod | null;
 
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
   });
 
   let message = "";
+
+  onMount(() => {
+    const unsubscribe = user.subscribe((u) => {
+      if (u) {
+        period = periods.getPeriod(parseInt(data.id));
+      }
+    });
+
+    return unsubscribe;
+  });
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -54,8 +48,8 @@
 
     try {
       checkData(name, start, end, street, num, zip, city, country);
-      await editPeriod(
-        data.id,
+      await periods.edit(
+        parseInt(data.id),
         name,
         start,
         end,
@@ -80,72 +74,58 @@
   <MessageCard {message} isError />
 {/if}
 
-{#if periodPromise}
-  {#await periodPromise}
-    <Spinner />
-  {:then period}
-    <Title text="Modifier {period.name}" />
+<Title text="Modifier {period?.name ?? ''}" />
 
-    <form on:submit|preventDefault={handleSubmit} class="py-4">
-      <Input
-        title="Nom"
-        name="name"
-        type="text"
-        value={period.name}
-        isRequired
-      />
-      <Input
-        title="Date de début"
-        name="start"
-        value={period.startDateTime.split("T")[0]}
-        type="date"
-        isRequired
-      />
-      <Input
-        title="Date de fin"
-        name="end"
-        value={period.endDateTime.split("T")[0]}
-        type="date"
-        isRequired
-      />
-      <Input
-        title="Rue"
-        name="street"
-        value={period.place.street}
-        type="text"
-        isRequired
-      />
-      <Input
-        title="Numéro"
-        name="num"
-        value={period.place.num.toString()}
-        type="number"
-        isRequired
-      />
-      <Input
-        title="Code postal"
-        name="zip"
-        value={period.place.zipCode}
-        type="text"
-        isRequired
-      />
-      <Input
-        title="Localité"
-        name="city"
-        value={period.place.city}
-        type="text"
-        isRequired
-      />
-      <SelectInput
-        title="Pays"
-        name="country"
-        value={period.place.country}
-        {options}
-        isRequired
-      />
-      <Button text="Sauvegarder" />
-    </form>
-  {:catch}
-    {goto(`${base}/periods`)}
-  {/await}
-{/if}
+<form on:submit|preventDefault={handleSubmit} class="py-4">
+  <Input title="Nom" name="name" type="text" value={period?.name} isRequired />
+  <Input
+    title="Date de début"
+    name="start"
+    value={period?.startDateTime.split("T")[0]}
+    type="date"
+    isRequired
+  />
+  <Input
+    title="Date de fin"
+    name="end"
+    value={period?.endDateTime.split("T")[0]}
+    type="date"
+    isRequired
+  />
+  <Input
+    title="Rue"
+    name="street"
+    value={period?.place.street}
+    type="text"
+    isRequired
+  />
+  <Input
+    title="Numéro"
+    name="num"
+    value={period?.place.num.toString()}
+    type="number"
+    isRequired
+  />
+  <Input
+    title="Code postal"
+    name="zip"
+    value={period?.place.zipCode}
+    type="text"
+    isRequired
+  />
+  <Input
+    title="Localité"
+    name="city"
+    value={period?.place.city}
+    type="text"
+    isRequired
+  />
+  <SelectInput
+    title="Pays"
+    name="country"
+    value={period?.place.country}
+    {options}
+    isRequired
+  />
+  <Button text="Sauvegarder" />
+</form>

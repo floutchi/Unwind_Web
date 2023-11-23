@@ -8,7 +8,7 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
-  import { checkData, createPeriod } from "$lib/periods";
+  import { checkData, periods } from "$lib/periods";
 
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
@@ -32,7 +32,7 @@
 
     try {
       checkData(name, start, end, street, num, zip, city, country);
-      await createPeriod(
+      await periods.create(
         name,
         start,
         end,

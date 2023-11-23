@@ -1,11 +1,11 @@
 <script lang="ts">
   import Title from "$lib/components/Title.svelte";
   import { onMount } from "svelte";
-  import { user } from "$lib/auth";
   import { chatMessages, closeConnection, fetchMessages } from "$lib/messages";
   import type { PageData } from "./$types";
   import MessageList from "$lib/components/MessageList.svelte";
   import { createConnection, sendMessageToServer } from "$lib/messages";
+  import { user } from "$lib/auth";
 
   export let data: PageData;
 
@@ -13,7 +13,7 @@
     const unsubscribe = user.subscribe((u) => {
       if (u) {
         createConnection(data.id);
-        fetchMessages(u.token, data.id);
+        fetchMessages(data.id);
       }
     });
 

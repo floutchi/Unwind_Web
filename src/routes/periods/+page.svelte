@@ -2,22 +2,21 @@
   import { user } from "$lib/auth";
   import Title from "$lib/components/Title.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
-  import { fetchPeriods, type VacationPeriod } from "$lib/periods";
   import { onMount } from "svelte";
   import PeriodList from "$lib/components/PeriodList.svelte";
-  let periodsPromise: Promise<VacationPeriod[]>;
+  import { periods } from "$lib/periods";
+
+  let periodsPromise: Promise<void>;
 
   onMount(() => {
     const unsubscribe = user.subscribe((u) => {
       if (u) {
-        periodsPromise = fetchPeriods(u.token);
+        periodsPromise = periods.fetch();
       }
     });
 
     return unsubscribe;
   });
-
-
 </script>
 
 <svelte:head>
@@ -25,14 +24,12 @@
 </svelte:head>
 
 <Title text="Mes vacances" />
-{#if periodsPromise}
-  {#await periodsPromise}
-    <div class="w-full py-2 flex justify-center items-center">
-      <Spinner />
-    </div>
-  {:then periods}
-    <PeriodList {periods} />
-  {:catch err}
-    <p class="text-center text-lg py-2 text-red-600">{err}</p>
-  {/await}
-{/if}
+{#await periodsPromise}
+  <div class="w-full py-2 flex justify-center items-center">
+    <Spinner />
+  </div>
+{:then}
+  <PeriodList periods={$periods} />
+{:catch err}
+  <p class="text-center text-lg py-2 text-red-600">{err}</p>
+{/await}

@@ -1,11 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import {
-    deletePeriod,
-    downloadiCal,
-    type VacationPeriod,
-  } from "$lib/periods";
+  import { downloadiCal, periods, type VacationPeriod } from "$lib/periods";
   import ActivitySection from "./ActivitySection.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
@@ -20,9 +16,9 @@
 
   let showPop = false;
 
-  function deletePeriodConfirm() {
+  async function deletePeriodConfirm() {
     showPop = false;
-    deletePeriod(period.idHoliday);
+    await periods.delete(period.idHoliday);
     goto(`${base}/periods`);
   }
 
@@ -108,7 +104,7 @@
     title="Prévisions météo"
     subtitle="Les prévisions météorologiques sur place"
   >
-    <WeatherSection weather={period.weather} />
+    <WeatherSection weather={period.weather ?? []} />
   </Card>
 
   {#if showPop}
@@ -116,7 +112,7 @@
       title="Supprimer la période de vacances"
       body="Êtes-vous sûr de vouloir supprimer cette période de vacances ?"
       on:close={() => (showPop = false)}
-      on:confirm={() => deletePeriodConfirm()}
+      on:confirm={deletePeriodConfirm}
     />
   {/if}
 </div>
