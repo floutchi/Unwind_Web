@@ -15,6 +15,7 @@
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
   });
+
   let message = "";
 
   async function handleSubmit(event: SubmitEvent) {

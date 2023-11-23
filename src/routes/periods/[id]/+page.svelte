@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
   import { user } from "$lib/auth";
-  import { fetchPeriod, type VacationPeriod } from "$lib/periods";
+  import { periods, type VacationPeriod } from "$lib/periods";
   import Spinner from "$lib/components/Spinner.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
@@ -15,7 +15,7 @@
   onMount(() => {
     const unsubscribe = user.subscribe((u) => {
       if (u) {
-        periodPromise = fetchPeriod(data.id, u.token);
+        periodPromise = periods.fetchPeriod(parseInt(data.id));
       }
     });
 

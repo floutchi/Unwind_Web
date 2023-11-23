@@ -4,6 +4,7 @@ import { BASE_URL } from "./url";
 import type { Activity } from "./activities";
 import type { Place } from "./place";
 import type { Weather } from "./weather";
+import type { PeriodStore } from "./PeriodStoreType";
 
 export interface VacationPeriod {
   idHoliday: number;
@@ -16,12 +17,14 @@ export interface VacationPeriod {
   weather: Weather[] | null;
 }
 
-export function createPeriodStore() {
+export function createPeriodStore(): PeriodStore {
   const store = writable<VacationPeriod[]>([]);
   const { subscribe, set, update } = store;
 
   return {
     subscribe,
+    getPeriod: (periodId: number): VacationPeriod =>
+      get(store)!.find((period) => period.idHoliday === periodId)!,
     fetch: async () => {
       const periods = await _fetchPeriods();
       set(periods);
@@ -29,13 +32,15 @@ export function createPeriodStore() {
     fetchPeriod: async (periodId: number): Promise<VacationPeriod> => {
       let period = get(store).find((period) => period.idHoliday === periodId);
 
+      if (period && period.weather) return period;
+
       if (!period) {
         const newPeriod = await _fetchPeriod(periodId);
         update((periods) => [...periods, newPeriod]);
         return newPeriod;
       }
 
-      period = await _fetchPeriod(periodId);
+      period.weather = (await _fetchPeriod(periodId)).weather;
       update((periods) => {
         periods[periods.findIndex((p) => p.idHoliday === period!.idHoliday)] =
           period!;
@@ -71,7 +76,7 @@ export function createPeriodStore() {
         periods.filter((period) => period.idHoliday !== periodId)
       );
     },
-    update: async (
+    edit: async (
       periodId: number,
       name: string,
       start: string,
