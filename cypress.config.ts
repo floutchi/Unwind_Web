@@ -6,4 +6,11 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+  includeShadowDom: true,
+  component: {
+    devServer: {
+      framework: 'svelte',
+      bundler: 'vite',
+    },
+  },
 });
