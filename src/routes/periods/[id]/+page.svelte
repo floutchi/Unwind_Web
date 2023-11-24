@@ -10,7 +10,7 @@
   import Dashboard from "$lib/components/Dashboard.svelte";
 
   export let data: PageData;
-  let periodPromise: Promise<VacationPeriod>;
+  let periodPromise: Promise<void>;
 
   onMount(() => {
     const unsubscribe = user.subscribe((u) => {
@@ -30,9 +30,9 @@
 {#if periodPromise}
   {#await periodPromise}
     <Spinner />
-  {:then period}
-    <Title text={period.name} />
-    <Dashboard {period} />
+  {:then}
+    <Title text={periods.getPeriod(parseInt(data.id)).name} />
+    <Dashboard period={periods.getPeriod(parseInt(data.id))} />
   {:catch}
     {goto(`${base}/periods`)}
   {/await}

@@ -29,24 +29,21 @@ export function createPeriodStore(): PeriodStore {
       const periods = await _fetchPeriods();
       set(periods);
     },
-    fetchPeriod: async (periodId: number): Promise<VacationPeriod> => {
+    fetchPeriod: async (periodId: number) => {
       let period = get(store).find((period) => period.idHoliday === periodId);
-
-      if (period && period.weather) return period;
+      let updatedPeriod = await _fetchPeriod(periodId);
 
       if (!period) {
-        const newPeriod = await _fetchPeriod(periodId);
-        update((periods) => [...periods, newPeriod]);
-        return newPeriod;
+        update((periods) => [...periods, updatedPeriod]);
+        return;
       }
 
-      period.weather = (await _fetchPeriod(periodId)).weather;
       update((periods) => {
-        periods[periods.findIndex((p) => p.idHoliday === period!.idHoliday)] =
-          period!;
+        periods[
+          periods.findIndex((p) => p.idHoliday === updatedPeriod.idHoliday)
+        ] = updatedPeriod!;
         return periods;
       });
-      return period;
     },
     create: async (
       name: string,

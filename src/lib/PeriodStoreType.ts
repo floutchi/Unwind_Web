@@ -9,7 +9,7 @@ export interface PeriodStore {
   ) => Unsubscriber;
   getPeriod: (periodId: number) => VacationPeriod;
   fetch: () => Promise<void>;
-  fetchPeriod: (periodId: number) => Promise<VacationPeriod>;
+  fetchPeriod: (periodId: number) => Promise<void>;
   create: (
     name: string,
     start: string,
