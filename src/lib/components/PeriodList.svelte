@@ -51,7 +51,9 @@
       name="country"
       options={selectOptions}
     />
-    <Button text="Filtrer" />
+    <div class="mt-7">
+      <Button text="Filtrer" />
+    </div>
   </form>
 {/if}
 <div class="flex flex-col gap-6 md:grid md:grid-cols-3 md:gap-4">
