@@ -157,21 +157,20 @@ export async function editProfile(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       firstName,
       lastName,
       email,
       oldPassword,
-      newPassword
+      newPassword,
     }),
   });
 
   const json = await res.json();
 
   if (!res.ok) {
-    console.log(json);
     throw new Error(json.error ?? "Une erreur inattendue est survenue");
   }
 

@@ -25,7 +25,7 @@
     });
 
     fetchTotalUsers().then((v) => (totalUsers = v));
-    
+
     setInterval(async () => {
       totalUsers = await fetchTotalUsers();
     }, 5000);

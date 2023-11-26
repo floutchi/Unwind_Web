@@ -275,8 +275,6 @@ async function _editPeriod(
     weather: null,
   };
 
-  console.log(period);
-
   const token = get(user)!.token;
 
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {

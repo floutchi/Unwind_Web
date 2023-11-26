@@ -15,7 +15,7 @@
     id={name}
     class="p-3 outline-none border-2 border-gray-200 focus:border-teal-500 rounded-md w-full"
     required={isRequired}
-    value={value}
+    {value}
   >
     {#each options as option}
       <option value={option.value}>{option.name}</option>

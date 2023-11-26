@@ -35,10 +35,10 @@
       }
     });
 
-    let SignInTime = localStorage.getItem("SignInTime");
-    if (SignInTime) {
-      globalSignInTime = SignInTime;
-      if (Date.now() < parseInt(SignInTime)) {
+    let signInTime = localStorage.getItem("SignInTime");
+    if (signInTime) {
+      globalSignInTime = signInTime;
+      if (Date.now() < parseInt(signInTime)) {
         signInMessage();
       }
     }
@@ -55,12 +55,7 @@
     const password = data.password as string;
 
     try {
-      console.log(canSignIn);
-      console.log(Date.now());
-      console.log(globalSignInTime);
-      if ((canSignIn && Date.now() > parseInt(globalSignInTime))) {
-        console.log(Date.now());
-        console.log(globalSignInTime);
+      if (canSignIn && Date.now() > parseInt(globalSignInTime)) {
         await signIn(email, password);
       } else {
         signInMessage();

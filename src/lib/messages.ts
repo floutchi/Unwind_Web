@@ -42,7 +42,6 @@ export function sendMessageToServer(message: string, periodId: string) {
       content: message,
       idHoliday: periodId,
     };
-    console.log(chatmessage);
     stompClient.send("/app/message", {}, JSON.stringify(chatmessage));
   } else {
     console.error("WebSocket connection not established.");
