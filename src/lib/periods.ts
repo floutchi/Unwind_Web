@@ -26,12 +26,14 @@ export function createPeriodStore(): PeriodStore {
     getPeriod: (periodId: number): VacationPeriod =>
       get(store)!.find((period) => period.idHoliday === periodId)!,
     fetch: async () => {
-      const periods = await _fetchPeriods();
-      set(periods);
+      if (get(store).length === 0) {
+        const periods = await _fetchPeriods();
+        set(periods);
+      }
     },
     fetchPeriod: async (periodId: number) => {
-      let period = get(store).find((period) => period.idHoliday === periodId);
-      let updatedPeriod = await _fetchPeriod(periodId);
+      const period = get(store).find((period) => period.idHoliday === periodId);
+      const updatedPeriod = await _fetchPeriod(periodId);
 
       if (!period) {
         update((periods) => [...periods, updatedPeriod]);
@@ -227,7 +229,7 @@ async function _createPeriod(
     throw new Error(json.error ?? "Une erreur inconnue est survenue");
   }
 
-  return period;
+  return (await res.json()) as VacationPeriod;
 }
 
 async function _deletePeriod(periodId: number) {

@@ -1,9 +1,9 @@
 ﻿/* SmtpJS.com - v3.0.0 */
 export const Email = {
   send: function (a: any) {
-    return new Promise<string>(function (n, e) {
+    return new Promise<string>(function (n) {
       (a.nocache = Math.floor(1e6 * Math.random() + 1)), (a.Action = "Send");
-      var t = JSON.stringify(a);
+      const t = JSON.stringify(a);
       Email.ajaxPost(
         "https://smtpjs.com/v3/smtpjs.aspx?",
         t,
@@ -14,24 +14,24 @@ export const Email = {
     });
   },
   ajaxPost: function (e: any, n: any, t: any) {
-    var a = Email.createCORSRequest("POST", e);
+    const a = Email.createCORSRequest("POST", e);
     a.setRequestHeader("Content-type", "application/x-www-form-urlencoded"),
       (a.onload = function () {
-        var e = a.responseText;
+        const e = a.responseText;
         null != t && t(e);
       }),
       a.send(n);
   },
   ajax: function (e: any, n: any) {
-    var t = Email.createCORSRequest("GET", e);
+    const t = Email.createCORSRequest("GET", e);
     (t.onload = function () {
-      var e = t.responseText;
+      const e = t.responseText;
       null != n && n(e);
     }),
       t.send();
   },
   createCORSRequest: function (e: any, n: any) {
-    var t = new XMLHttpRequest();
+    const t = new XMLHttpRequest();
     return (
       "withCredentials" in t
         ? t.open(e, n, !0)

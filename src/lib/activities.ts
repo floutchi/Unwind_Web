@@ -121,7 +121,7 @@ export async function editActivity(
   }
 }
 
-export async function deleteActivity(periodId: number, activityId: string) {
+export async function deleteActivity(periodId: number, activityId: number) {
   const token = get(user)!.token;
 
   const res = await fetch(

@@ -37,7 +37,7 @@ export function closeConnection() {
 export function sendMessageToServer(message: string, periodId: string) {
   if (stompClient && stompClient.connected) {
     const u = get(user)!;
-    var chatmessage = {
+    const chatmessage = {
       senderMail: u.email,
       content: message,
       idHoliday: periodId,

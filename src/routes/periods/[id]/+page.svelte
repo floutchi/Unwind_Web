@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
   import { user } from "$lib/auth";
-  import { periods, type VacationPeriod } from "$lib/periods";
+  import { periods } from "$lib/periods";
   import Spinner from "$lib/components/Spinner.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";

@@ -7,7 +7,7 @@ declare global {
     // interface PageData {}
     // interface Platform {}
   }
-  var google: any;
+  let google: any;
 }
 
 export {};

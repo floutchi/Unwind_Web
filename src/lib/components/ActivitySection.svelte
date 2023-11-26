@@ -41,9 +41,10 @@
     });
   }
 
-  function deleteActivityConfirm() {
+  async function deleteActivityConfirm() {
     showPop = false;
-    deleteActivity(periodId, selectedId!.toString());
+    await deleteActivity(periodId, selectedId!);
+    activities = activities.filter((a) => a.idActivity !== selectedId);
   }
 </script>
 
