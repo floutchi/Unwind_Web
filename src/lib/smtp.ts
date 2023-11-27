@@ -31,7 +31,7 @@ export const Email = {
       t.send();
   },
   createCORSRequest: function (e: any, n: any) {
-    const t = new XMLHttpRequest();
+    let t = new XMLHttpRequest();
     return (
       "withCredentials" in t
         ? t.open(e, n, !0)
