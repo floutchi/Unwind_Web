@@ -1,6 +1,7 @@
 import { get, writable } from "svelte/store";
 import { isEmailValid } from "./email";
 import { BASE_URL } from "./url";
+import { periods } from "./periods";
 
 export interface User {
   firstName: string;
@@ -142,6 +143,7 @@ export async function signInWithGoogle(response: any) {
 
 export function signOut() {
   user.set(null);
+  periods.clear();
   localStorage.clear();
 }
 

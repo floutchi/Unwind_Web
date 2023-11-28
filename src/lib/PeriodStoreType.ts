@@ -21,6 +21,7 @@ export interface PeriodStore {
     country: string
   ) => Promise<void>;
   delete: (periodId: number) => Promise<void>;
+  clear: () => void;
   edit: (
     periodId: number,
     name: string,

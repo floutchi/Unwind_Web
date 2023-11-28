@@ -75,6 +75,7 @@ export function createPeriodStore(): PeriodStore {
         periods.filter((period) => period.idHoliday !== periodId)
       );
     },
+    clear: () => set([]),
     edit: async (
       periodId: number,
       name: string,
