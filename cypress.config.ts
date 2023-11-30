@@ -5,6 +5,7 @@ export default defineConfig({
     setupNodeEvents() {
       // implement node event listeners here
     },
+    baseUrl: "http://localhost:5173/~q210126/unwind"
   },
   includeShadowDom: true,
   component: {
