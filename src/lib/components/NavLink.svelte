@@ -7,6 +7,7 @@
 
 <li>
   <a
+  on:click
     href={url}
     class={`hover:underline hover:text-teal-600 ${
       `${$page.url.pathname}` === url ? "text-teal-600" : ""
