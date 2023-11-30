@@ -5,6 +5,7 @@
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import SelectInput from "$lib/components/SelectInput.svelte";
+    import Spinner from "$lib/components/Spinner.svelte";
   import TextArea from "$lib/components/TextArea.svelte";
   import Title from "$lib/components/Title.svelte";
   import { sendEmail, verifyData } from "$lib/contact";
@@ -26,8 +27,10 @@
 
   let message: string | null = null;
   let isError: boolean = false;
+  let isSending: boolean = false;
 
   async function handleSubmit(event: SubmitEvent) {
+    isSending = true;
     message = null;
     const entries = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(entries);
@@ -45,6 +48,7 @@
     }
 
     const result = await sendEmail(email, reason, content);
+    isSending = false;
 
     if (result === "OK") {
       isError = false;
@@ -74,5 +78,9 @@
   />
   <SelectInput title="Raison du message" name="reason" {options} isRequired />
   <TextArea title="Contenu du message" name="content" isRequired />
-  <Button text="Envoyer" />
+  {#if isSending}
+    <Spinner />
+  {:else}
+    <Button text="Envoyer" />
+  {/if}
 </form>
