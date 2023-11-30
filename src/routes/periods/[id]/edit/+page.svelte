@@ -12,6 +12,8 @@
   import { checkData, periods, type VacationPeriod } from "$lib/periods";
   import { onMount } from "svelte";
   import { user } from "$lib/auth";
+  import { loadGooglePlace } from "$lib/LoadGooglePlace";
+    import type { Place } from "$lib/place";
 
   export let data: PageData;
   let period: VacationPeriod | null;
@@ -22,15 +24,39 @@
 
   let message = "";
 
+  let streetInput = "";
+  let numInput = "";
+  let zipInput = "";
+  let cityInput = "";
+  let countryInput = "";
+
   onMount(() => {
+    loadGooglePlace(onPlaceChanged);
+
     const unsubscribe = user.subscribe((u) => {
       if (u) {
         period = periods.getPeriod(parseInt(data.id));
+
+        if (period) {
+          streetInput = period.place.street;
+          numInput = period.place.num.toString();
+          zipInput = period.place.zipCode;
+          cityInput = period.place.city;
+          countryInput = period.place.country;
+        }
       }
     });
 
     return unsubscribe;
   });
+
+  function onPlaceChanged(place: Place) {
+    streetInput = place.street;
+    numInput = place.num.toString();
+    zipInput = place.zipCode;
+    cityInput = place.city;
+    countryInput = place.country;
+  }
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -57,7 +83,7 @@
         parseInt(num),
         zip,
         city,
-        country
+        country,
       );
       await goto(`${base}/periods/${data.id}`);
     } catch (e: any) {
@@ -92,38 +118,40 @@
     type="date"
     isRequired
   />
+
+  <Input title="Rechercher un lieu" name="address" type="text" />
   <Input
     title="Rue"
     name="street"
-    value={period?.place.street}
+    value={streetInput}
     type="text"
     isRequired
   />
   <Input
     title="Numéro"
     name="num"
-    value={period?.place.num.toString()}
+    value={numInput}
     type="number"
     isRequired
   />
   <Input
     title="Code postal"
     name="zip"
-    value={period?.place.zipCode}
+    value={zipInput}
     type="text"
     isRequired
   />
   <Input
     title="Localité"
     name="city"
-    value={period?.place.city}
+    value={cityInput}
     type="text"
     isRequired
   />
   <SelectInput
     title="Pays"
     name="country"
-    value={period?.place.country}
+    value={countryInput}
     {options}
     isRequired
   />

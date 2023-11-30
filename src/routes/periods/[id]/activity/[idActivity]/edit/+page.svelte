@@ -13,6 +13,8 @@
   import { checkData, editActivity, type Activity } from "$lib/activities";
   import { onMount } from "svelte";
   import { user } from "$lib/auth";
+    import { loadGooglePlace } from "$lib/LoadGooglePlace";
+    import type { Place } from "$lib/place";
 
   export let data: PageData;
   let activity: Activity;
@@ -23,7 +25,16 @@
 
   let message = "";
 
+  let streetInput = "";
+  let numInput = "";
+  let zipInput = "";
+  let cityInput = "";
+  let countryInput = "";
+
   onMount(() => {
+
+    loadGooglePlace(onPlaceChanged);
+
     const unsubscribe = user.subscribe((u) => {
       if (u) {
         const a = periods
@@ -35,11 +46,27 @@
         }
 
         activity = a;
+
+        if (activity) {
+          streetInput = activity.place.street;
+          numInput = activity.place.num.toString();
+          zipInput = activity.place.zipCode;
+          cityInput = activity.place.city;
+          countryInput = activity.place.country;
+        }
       }
     });
 
     return unsubscribe;
   });
+
+  function onPlaceChanged(place: Place) {
+    streetInput = place.street;
+    numInput = place.num.toString();
+    zipInput = place.zipCode;
+    cityInput = place.city;
+    countryInput = place.country;
+  }
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -105,39 +132,40 @@
     type="datetime-local"
     value={activity?.endDateTime}
   />
+  <Input title="Rechercher un lieu" name="address" type="text" />
   <Input
     title="Rue"
     name="street"
     type="text"
-    value={activity?.place.street}
+    value={streetInput}
     isRequired
   />
   <Input
     title="Numéro"
     name="num"
     type="number"
-    value={activity?.place.num?.toString() || ""}
+    value={numInput}
     isRequired
   />
   <Input
     title="Code postal"
     name="zip"
     type="text"
-    value={activity?.place.zipCode}
+    value={zipInput}
     isRequired
   />
   <Input
     title="Localité"
     name="city"
     type="text"
-    value={activity?.place.city}
+    value={cityInput}
     isRequired
   />
   <SelectInput
     title="Pays"
     name="country"
     {options}
-    value={activity?.place.country}
+    value={countryInput}
     isRequired
   />
   <Button text="Sauvegarder" />

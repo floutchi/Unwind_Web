@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import { loadGooglePlace } from "$lib/LoadGooglePlace";
   import type { SelectOption } from "$lib/SelectOptionType";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
@@ -9,71 +10,30 @@
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
   import { checkData, periods } from "$lib/periods";
+    import type { Place } from "$lib/place";
   import { onMount } from "svelte";
-  import { Loader } from "@googlemaps/js-api-loader";
 
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
   });
 
-  let autocomplete: any;
-  let address: any;
-
-  const autoOptions = {
-    fields: ["address_components", "geometry", "name"],
-    types: ["address"],
-    strictBounds: false,
-  };
+  let streetInput = "";
+  let numInput = "";
+  let zipInput = "";
+  let cityInput = "";
+  let countryInput = "";
 
   onMount(() => {
-    const loader = new Loader({
-      apiKey: "AIzaSyCLNgwKUno1K3gg3MngB-iDS5md5yEVzck",
-      version: "weekly",
-      libraries: ["places"],
-    });
+    loadGooglePlace(onPlaceChanged);
+  });
 
-    loader
-      .importLibrary("places")
-      .then(() => {
-        autocomplete = new google.maps.places.Autocomplete(
-          document.getElementById("adress"),
-          autoOptions,
-        );
-
-        autocomplete.addListener("place_changed", onPlaceChanged);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    });
-
-    function onPlaceChanged() {
-      address = autocomplete.getPlace();
-
-      console.log(address.address_components);
-      const streetInput = document.getElementById("street") as HTMLInputElement | null;
-      const numInput = document.getElementById("num") as HTMLInputElement | null;
-      const zipInput = document.getElementById("zip") as HTMLInputElement | null;
-      const cityInput = document.getElementById("city") as HTMLInputElement | null;
-      const countryInput = document.getElementById("country") as HTMLInputElement | null;
-      if (streetInput && numInput && zipInput && cityInput && countryInput) {
-        streetInput.value =
-        address.address_components.find((c: any) => c.types.includes("route"))
-        ?.long_name || "";
-        numInput.value =
-        address.address_components.find((c: any) => c.types.includes("street_number"))
-        ?.long_name || "";
-        zipInput.value =
-        address.address_components.find((c: any) => c.types.includes("postal_code"))
-        ?.long_name || "";
-        cityInput.value =
-        address.address_components.find((c: any) => c.types.includes("locality"))
-        ?.long_name || "";
-        countryInput.value =
-        address.address_components.find((c: any) => c.types.includes("country"))
-        ?.short_name || "";
-    }
-  };
+  function onPlaceChanged(place: Place) {
+    streetInput = place.street;
+    numInput = place.num.toString();
+    zipInput = place.zipCode;
+    cityInput = place.city;
+    countryInput = place.country;
+  }
 
   let message = "";
 
@@ -123,11 +83,29 @@
   <Input title="Nom" name="name" type="text" isRequired />
   <Input title="Date de début" name="start" type="date" isRequired />
   <Input title="Date de fin" name="end" type="date" isRequired />
-  <Input title="Adresse" name="adress" type="text"/>
-  <Input title="Rue" name="street" type="text" isRequired />
-  <Input title="Numéro" name="num" type="number" isRequired />
-  <Input title="Code postal" name="zip" type="text" isRequired />
-  <Input title="Localité" name="city" type="text" isRequired />
-  <SelectInput title="Pays" name="country" {options} isRequired />
+  <Input title="Rechercher un lieu" name="address" type="text" />
+  <Input value={streetInput} title="Rue" name="street" type="text" isRequired />
+  <Input value={numInput} title="Numéro" name="num" type="number" isRequired />
+  <Input
+    value={zipInput}
+    title="Code postal"
+    name="zip"
+    type="text"
+    isRequired
+  />
+  <Input
+    value={cityInput}
+    title="Localité"
+    name="city"
+    type="text"
+    isRequired
+  />
+  <SelectInput
+    value={countryInput}
+    title="Pays"
+    name="country"
+    {options}
+    isRequired
+  />
   <Button text="Créer" />
 </form>

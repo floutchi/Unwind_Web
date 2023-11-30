@@ -9,7 +9,10 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
+    import { onMount } from "svelte";
   import type { PageData } from "./$types";
+    import { loadGooglePlace } from "$lib/LoadGooglePlace";
+    import type { Place } from "$lib/place";
 
   export let data: PageData;
   const options: SelectOption[] = countries.map((c) => {
@@ -17,6 +20,24 @@
   });
 
   let message = "";
+
+  let streetInput = "";
+  let numInput = "";
+  let zipInput = "";
+  let cityInput = "";
+  let countryInput = "";
+
+  onMount(() => {
+    loadGooglePlace(onPlaceChanged);
+  });
+
+  function onPlaceChanged(place: Place) {
+    streetInput = place.street;
+    numInput = place.num.toString();
+    zipInput = place.zipCode;
+    cityInput = place.city;
+    countryInput = place.country;
+  }
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -59,10 +80,11 @@
 {/if}
 <form on:submit|preventDefault={handleSubmit} class="py-4">
   <Input title="Nom" name="name" type="text" isRequired />
-  <Input title="Rue" name="street" type="text" isRequired />
-  <Input title="Numéro" name="num" type="number" isRequired />
-  <Input title="Code postal" name="zip" type="text" isRequired />
-  <Input title="Localité" name="city" type="text" isRequired />
-  <SelectInput title="Pays" name="country" {options} isRequired />
+  <Input title="Rechercher un lieu" name="address" type="text" />
+  <Input value={streetInput} title="Rue" name="street" type="text" isRequired />
+  <Input value={numInput} title="Numéro" name="num" type="number" isRequired />
+  <Input value={zipInput} title="Code postal" name="zip" type="text" isRequired />
+  <Input value={cityInput} title="Localité" name="city" type="text" isRequired />
+  <SelectInput value={countryInput} title="Pays" name="country" {options} isRequired />
   <Button text="Ajouter" />
 </form>
