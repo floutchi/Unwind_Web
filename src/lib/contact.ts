@@ -1,5 +1,11 @@
 import { isEmailValid } from "./email";
-import { Email } from "./smtp";
+import { BASE_URL } from "./url";
+
+export interface Mail {
+  senderEmail: string;
+  subject: string;
+  body:string;
+}
 
 export function verifyData(email: string, reason: string, content: string) {
   if (email.trim() === "" || reason.trim() === "" || content.trim() === "") {
@@ -18,15 +24,29 @@ export async function sendEmail(
   reason: string,
   content: string
 ): Promise<string> {
-  return await Email.send({
-    Host: "smtp.elasticemail.com",
-    Username: "eppe.quentin@gmail.com",
-    Password: "85CCEB4C8AA56F6EFC6273BE126323F69FE2",
-    To: "eppe.quentin@gmail.com",
-    From: "support@eppeque.dev",
-    Subject: `${
+
+  const mail: Mail = {
+    senderEmail: email,
+    subject: `${
       reason === "issue" ? "Problème signalé par" : "Demande formulée par"
     } ${email}`,
-    Body: content,
+    body: content,
+  };
+
+  const res = await fetch(`${BASE_URL}/home/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(mail),
   });
+
+  console.log(JSON.stringify(mail));
+
+  if (!res.ok) {
+    const json = await res.json();
+    throw new Error(json.error ?? "Une erreur inconnue est survenue");
+  }
+
+  return "OK";
 }
