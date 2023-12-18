@@ -8,9 +8,15 @@
   import { onMount } from "svelte";
 
   let userStore = getAppState().userStore;
+  let periodStore = getAppState().periodStore;
   let user = userStore.user;
 
   onMount(() => verifyAuth(userStore));
+
+  function handleSignout() {
+    periodStore.clear();
+    userStore.signOut();
+  }
 </script>
 
 <svelte:head>
@@ -30,5 +36,5 @@
     text="Editer profil"
     on:click={() => goto(`${base}/auth/account/edit`)}
   />
-  <Button text="Se déconnecter" on:click={userStore.signOut} />
+  <Button text="Se déconnecter" on:click={handleSignout} />
 </div>

@@ -50,6 +50,9 @@
     for (const u of usersToRemove) {
       try {
         await removeUser(u, data.id, $user!.token);
+        if ($user!.email === u) {
+          goto(`${base}/periods`);
+        }
       } catch (e: any) {
         message = e.message;
         return;

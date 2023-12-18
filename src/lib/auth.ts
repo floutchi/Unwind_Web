@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import { isEmailValid } from "./email";
 import { BASE_URL } from "./url";
+import { getAppState } from "./state";
 
 export interface User {
   firstName: string;
@@ -140,6 +141,7 @@ export class UserStore {
       throw new Error(json.error ?? "Une erreur inattendue est survenue");
     }
 
+    json.token = token;
     this.user.set(json as User);
     saveAuth(json.token);
   };
