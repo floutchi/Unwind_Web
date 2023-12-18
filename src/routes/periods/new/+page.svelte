@@ -9,10 +9,15 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
-  import { checkData, periods } from "$lib/periods";
-    import type { Place } from "$lib/place";
+  import { checkData } from "$lib/periods";
+  import type { Place } from "$lib/place";
+  import { getAppState } from "$lib/state";
+  import { verifyAuth } from "$lib/verify";
   import { onMount } from "svelte";
 
+  let state = getAppState();
+  let periods = state.periodStore;
+  let user = state.userStore.user;
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
   });
@@ -24,6 +29,7 @@
   let countryInput = "";
 
   onMount(() => {
+    verifyAuth(state.userStore);
     loadGooglePlace(onPlaceChanged);
   });
 
@@ -62,6 +68,7 @@
         zip,
         city,
         country,
+        $user!.token
       );
       await goto(`${base}/periods`);
     } catch (e: any) {

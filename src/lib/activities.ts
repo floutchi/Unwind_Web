@@ -1,7 +1,6 @@
 import { get } from "svelte/store";
 import type { Place } from "./place";
 import { BASE_URL } from "./url";
-import { user } from "./auth";
 
 export interface Activity {
   idActivity: number | null;
@@ -44,9 +43,9 @@ export async function createActivity(
   zip: string,
   city: string,
   country: string,
-  periodId: string
+  periodId: string,
+  token: string
 ) {
-  const token = get(user)!.token;
   const newActivity: Activity = {
     idActivity: null,
     name,
@@ -86,9 +85,9 @@ export async function editActivity(
   city: string,
   country: string,
   periodId: string,
-  activityId: string
+  activityId: string,
+  token: string
 ) {
-  const token = get(user)!.token;
   const newActivity: Activity = {
     idActivity: null,
     name,
@@ -121,9 +120,11 @@ export async function editActivity(
   }
 }
 
-export async function deleteActivity(periodId: number, activityId: number) {
-  const token = get(user)!.token;
-
+export async function deleteActivity(
+  periodId: number,
+  activityId: number,
+  token: string
+) {
   const res = await fetch(
     `${BASE_URL}/holidayperiod/${periodId}/activity/${activityId}`,
     {

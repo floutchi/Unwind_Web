@@ -4,18 +4,24 @@
   import Button from "$lib/components/Button.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
-  import { periods, removeUser } from "$lib/periods";
+  import { removeUser } from "$lib/periods";
   import type { PageData } from "./$types";
   import Chip from "$lib/components/Chip.svelte";
   import { onMount } from "svelte";
-  import { user } from "$lib/auth";
+  import { getAppState } from "$lib/state";
+  import { verifyAuth } from "$lib/verify";
 
   export let data: PageData;
+  let state = getAppState();
+  let user = state.userStore.user;
+  let periods = state.periodStore;
   let users: string[] = [];
   let usersToRemove: string[] = [];
   let message = "";
 
   onMount(() => {
+    verifyAuth(state.userStore);
+
     const unsubscribe = user.subscribe((u) => {
       if (u) {
         users = periods
@@ -41,9 +47,9 @@
 
   async function fetchRemove() {
     message = "";
-    for (const user of usersToRemove) {
+    for (const u of usersToRemove) {
       try {
-        await removeUser(user, data.id);
+        await removeUser(u, data.id, $user!.token);
       } catch (e: any) {
         message = e.message;
         return;

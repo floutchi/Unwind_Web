@@ -1,7 +1,5 @@
 import { BASE_URL, BASE_URL_WS } from "./url";
 import Stomp from "stompjs";
-import { user } from "$lib/auth";
-import { get } from "svelte/store";
 import { writable } from "svelte/store";
 
 export interface Message {
@@ -34,11 +32,14 @@ export function closeConnection() {
   }
 }
 
-export function sendMessageToServer(message: string, periodId: string) {
+export function sendMessageToServer(
+  message: string,
+  periodId: string,
+  email: string
+) {
   if (stompClient && stompClient.connected) {
-    const u = get(user)!;
     const chatmessage = {
-      senderMail: u.email,
+      senderMail: email,
       content: message,
       idHoliday: periodId,
     };
@@ -48,8 +49,7 @@ export function sendMessageToServer(message: string, periodId: string) {
   }
 }
 
-export async function fetchMessages(idHoliday: string) {
-  const token = get(user)!.token;
+export async function fetchMessages(idHoliday: string, token: string) {
   const res = await fetch(`${BASE_URL}/tchat/${idHoliday}`, {
     headers: {
       "Content-Type": "application/json",

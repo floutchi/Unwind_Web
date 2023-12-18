@@ -1,18 +1,20 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { checkData, signUp, user } from "$lib/auth";
+  import { checkData } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import GoogleButton from "$lib/components/GoogleButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
+  import { getAppState } from "$lib/state";
   import { onMount } from "svelte";
 
+  let userStore = getAppState().userStore;
   let message = "";
 
   onMount(() => {
-    const unsubscribe = user.subscribe((value) => {
+    const unsubscribe = userStore.user.subscribe((value) => {
       if (value) {
         goto(`${base}/periods`);
       }
@@ -34,7 +36,7 @@
 
     try {
       checkData(firstName, lastName, email, password, passwordConfirm);
-      await signUp(firstName, lastName, email, password);
+      await userStore.signUp(firstName, lastName, email, password);
     } catch (e: any) {
       message = e.message;
       return;

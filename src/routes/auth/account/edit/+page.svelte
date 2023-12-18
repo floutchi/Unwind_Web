@@ -1,13 +1,20 @@
 <script lang="ts">
-  import { checkEditData, editProfile, user } from "$lib/auth";
+  import { checkEditData } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Title from "$lib/components/Title.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
+  import { getAppState } from "$lib/state";
+  import { onMount } from "svelte";
+  import { verifyAuth } from "$lib/verify";
 
+  let userStore = getAppState().userStore;
+  let user = userStore.user;
   let message = "";
+
+  onMount(() => verifyAuth(userStore));
 
   async function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -29,7 +36,7 @@
         newPassword,
         newPasswordConfirm
       );
-      await editProfile(
+      await userStore.editProfile(
         firstName,
         lastName,
         email,

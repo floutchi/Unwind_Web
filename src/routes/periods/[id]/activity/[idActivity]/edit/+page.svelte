@@ -9,14 +9,17 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
-  import { periods } from "$lib/periods";
   import { checkData, editActivity, type Activity } from "$lib/activities";
   import { onMount } from "svelte";
-  import { user } from "$lib/auth";
-    import { loadGooglePlace } from "$lib/LoadGooglePlace";
-    import type { Place } from "$lib/place";
+  import { loadGooglePlace } from "$lib/LoadGooglePlace";
+  import type { Place } from "$lib/place";
+  import { getAppState } from "$lib/state";
+  import { verifyAuth } from "$lib/verify";
 
   export let data: PageData;
+  let state = getAppState();
+  let user = state.userStore.user;
+  let periods = state.periodStore;
   let activity: Activity;
 
   const options: SelectOption[] = countries.map((c) => {
@@ -32,7 +35,7 @@
   let countryInput = "";
 
   onMount(() => {
-
+    verifyAuth(state.userStore);
     loadGooglePlace(onPlaceChanged);
 
     const unsubscribe = user.subscribe((u) => {
@@ -94,7 +97,8 @@
         city,
         country,
         data.id,
-        data.idActivity
+        data.idActivity,
+        $user!.token
       );
       goto(`${base}/periods/${data.id}`);
     } catch (e: any) {
@@ -133,20 +137,8 @@
     value={activity?.endDateTime}
   />
   <Input title="Rechercher un lieu" name="address" type="text" />
-  <Input
-    title="Rue"
-    name="street"
-    type="text"
-    value={streetInput}
-    isRequired
-  />
-  <Input
-    title="Numéro"
-    name="num"
-    type="number"
-    value={numInput}
-    isRequired
-  />
+  <Input title="Rue" name="street" type="text" value={streetInput} isRequired />
+  <Input title="Numéro" name="num" type="number" value={numInput} isRequired />
   <Input
     title="Code postal"
     name="zip"

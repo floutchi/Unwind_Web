@@ -1,9 +1,10 @@
 <script>
   import { base } from "$app/paths";
-  import { user } from "$lib/auth";
+  import { getAppState } from "$lib/state";
   import NavLink from "./NavLink.svelte";
 
   let showLinks = false;
+  let user = getAppState().userStore.user;
 
   function openLinks() {
     showLinks = true;
@@ -42,13 +43,22 @@
     {/if}
     {#if $user}
       <NavLink on:click={closeLinks} text="Mes vacances" url="{base}/periods" />
-      <NavLink on:click={closeLinks} text="Mon compte" url="{base}/auth/account" />
+      <NavLink
+        on:click={closeLinks}
+        text="Mon compte"
+        url="{base}/auth/account"
+      />
     {/if}
     <NavLink on:click={closeLinks} text="Contact" url="{base}/contact" />
     {#if !$user}
-      <NavLink on:click={closeLinks} text="Connexion" url="{base}/auth/sign-in" />
+      <NavLink
+        on:click={closeLinks}
+        text="Connexion"
+        url="{base}/auth/sign-in"
+      />
       <li>
-        <a on:click={closeLinks}
+        <a
+          on:click={closeLinks}
           href="{base}/auth/sign-up"
           class="py-2 px-4 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-md hover:from-cyan-600 hover:to-teal-600"
           >S'inscrire</a

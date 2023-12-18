@@ -9,12 +9,17 @@
   import SelectInput from "$lib/components/SelectInput.svelte";
   import Title from "$lib/components/Title.svelte";
   import { countries } from "$lib/countries";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
   import type { PageData } from "./$types";
-    import { loadGooglePlace } from "$lib/LoadGooglePlace";
-    import type { Place } from "$lib/place";
+  import { loadGooglePlace } from "$lib/LoadGooglePlace";
+  import type { Place } from "$lib/place";
+  import { verifyAuth } from "$lib/verify";
+  import { getAppState } from "$lib/state";
 
   export let data: PageData;
+  let state = getAppState();
+  let user = state.userStore.user;
+
   const options: SelectOption[] = countries.map((c) => {
     return { name: c.name, value: c.code };
   });
@@ -28,6 +33,7 @@
   let countryInput = "";
 
   onMount(() => {
+    verifyAuth(state.userStore);
     loadGooglePlace(onPlaceChanged);
   });
 
@@ -60,7 +66,8 @@
         zip,
         city,
         country,
-        data.id
+        data.id,
+        $user!.token
       );
       goto(`${base}/periods/${data.id}`);
     } catch (e: any) {
@@ -83,8 +90,26 @@
   <Input title="Rechercher un lieu" name="address" type="text" />
   <Input value={streetInput} title="Rue" name="street" type="text" isRequired />
   <Input value={numInput} title="Numéro" name="num" type="number" isRequired />
-  <Input value={zipInput} title="Code postal" name="zip" type="text" isRequired />
-  <Input value={cityInput} title="Localité" name="city" type="text" isRequired />
-  <SelectInput value={countryInput} title="Pays" name="country" {options} isRequired />
+  <Input
+    value={zipInput}
+    title="Code postal"
+    name="zip"
+    type="text"
+    isRequired
+  />
+  <Input
+    value={cityInput}
+    title="Localité"
+    name="city"
+    type="text"
+    isRequired
+  />
+  <SelectInput
+    value={countryInput}
+    title="Pays"
+    name="country"
+    {options}
+    isRequired
+  />
   <Button text="Ajouter" />
 </form>

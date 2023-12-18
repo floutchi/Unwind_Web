@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { Message } from "$lib/messages";
-  import { user } from "$lib/auth";
   import { createEventDispatcher } from "svelte";
   import Button from "./Button.svelte";
   import TchatMessage from "./TchatMessage.svelte";
+  import { getAppState } from "$lib/state";
 
   export let messages: Message[];
+
+  let user = getAppState().userStore.user;
   let content = "";
 
   const dispatch = createEventDispatcher();

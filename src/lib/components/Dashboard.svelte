@@ -1,7 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { downloadiCal, periods, type VacationPeriod } from "$lib/periods";
+  import { downloadiCal, type VacationPeriod } from "$lib/periods";
+  import { getAppState } from "$lib/state";
   import ActivitySection from "./ActivitySection.svelte";
   import Card from "./Card.svelte";
   import IconButton from "./IconButton.svelte";
@@ -9,6 +10,7 @@
   import WeatherSection from "./WeatherSection.svelte";
 
   export let period: VacationPeriod;
+  let periods = getAppState().periodStore;
 
   let start = new Date(period.startDateTime);
   let end = new Date(period.endDateTime);

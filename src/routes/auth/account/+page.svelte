@@ -1,9 +1,16 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { signOut, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Title from "$lib/components/Title.svelte";
+  import { getAppState } from "$lib/state";
+  import { verifyAuth } from "$lib/verify";
+  import { onMount } from "svelte";
+
+  let userStore = getAppState().userStore;
+  let user = userStore.user;
+
+  onMount(() => verifyAuth(userStore));
 </script>
 
 <svelte:head>
@@ -23,5 +30,5 @@
     text="Editer profil"
     on:click={() => goto(`${base}/auth/account/edit`)}
   />
-  <Button text="Se déconnecter" on:click={signOut} />
+  <Button text="Se déconnecter" on:click={userStore.signOut} />
 </div>

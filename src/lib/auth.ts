@@ -1,7 +1,6 @@
-import { get, writable } from "svelte/store";
+import { writable } from "svelte/store";
 import { isEmailValid } from "./email";
 import { BASE_URL } from "./url";
-import { periods } from "./periods";
 
 export interface User {
   firstName: string;
@@ -10,8 +9,141 @@ export interface User {
   token: string;
 }
 
-export const user = writable<User | null>(null);
-export const isLoading = writable(true);
+export class UserStore {
+  user = writable<User | null>(null);
+  isLoading = writable(true);
+
+  loadAuth = async () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const userValue = await fetchUser(token);
+        this.user.set(userValue);
+      } catch (e: any) {
+        this.signOut();
+      }
+    }
+
+    this.isLoading.set(false);
+  };
+
+  signUp = async (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) => {
+    const res = await fetch(`${BASE_URL}/auth/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      throw new Error(json.error ?? "Une erreur inattendue est survenue");
+    }
+
+    this.user.set(json as User);
+    saveAuth(json.token);
+  };
+
+  signIn = async (email: string, password: string) => {
+    checkData("a", "b", email, password, password);
+
+    const res = await fetch(`${BASE_URL}/auth/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (json.error) {
+      throw new Error(json.error);
+    }
+
+    if (!res.ok) {
+      throw new Error("Une erreur inconnue est survenue lors de la connexion");
+    }
+
+    this.user.set(json as User);
+    saveAuth(json.token);
+  };
+
+  signInWithGoogle = async (response: any) => {
+    const credential = response.credential;
+
+    const res = await fetch(`${BASE_URL}/auth/googlesignin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idToken: credential,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (res.ok) {
+      this.user.set(json as User);
+      saveAuth(json.token);
+    }
+  };
+
+  signOut = () => {
+    this.user.set(null);
+    localStorage.clear();
+  };
+
+  editProfile = async (
+    firstName: string,
+    lastName: string,
+    email: string,
+    oldPassword: string,
+    newPassword: string,
+    token: string
+  ) => {
+    const res = await fetch(`${BASE_URL}/user/details`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        oldPassword,
+        newPassword,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      throw new Error(json.error ?? "Une erreur inattendue est survenue");
+    }
+
+    this.user.set(json as User);
+    saveAuth(json.token);
+  };
+}
 
 export function checkData(
   firstName: string,
@@ -63,138 +195,6 @@ export function checkEditData(
   }
 }
 
-export async function signUp(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string
-) {
-  const res = await fetch(`${BASE_URL}/auth/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      firstName,
-      lastName,
-      email,
-      password,
-    }),
-  });
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new Error(json.error ?? "Une erreur inattendue est survenue");
-  }
-
-  user.set(json as User);
-  saveAuth();
-}
-
-export async function signIn(email: string, password: string) {
-  checkData("a", "b", email, password, password);
-
-  const res = await fetch(`${BASE_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      password,
-    }),
-  });
-
-  const json = await res.json();
-
-  if (json.error) {
-    throw new Error(json.error);
-  }
-
-  if (!res.ok) {
-    throw new Error("Une erreur inconnue est survenue lors de la connexion");
-  }
-
-  user.set(json as User);
-  saveAuth();
-}
-
-export async function signInWithGoogle(response: any) {
-  const credential = response.credential;
-
-  const res = await fetch(`${BASE_URL}/auth/googlesignin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      idToken: credential,
-    }),
-  });
-
-  const json = await res.json();
-
-  if (res.ok) {
-    user.set(json);
-    saveAuth();
-  }
-}
-
-export function signOut() {
-  user.set(null);
-  periods.clear();
-  localStorage.clear();
-}
-
-export async function editProfile(
-  firstName: string,
-  lastName: string,
-  email: string,
-  oldPassword: string,
-  newPassword: string,
-  token: string
-) {
-  const res = await fetch(`${BASE_URL}/user/details`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      firstName,
-      lastName,
-      email,
-      oldPassword,
-      newPassword,
-    }),
-  });
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new Error(json.error ?? "Une erreur inattendue est survenue");
-  }
-
-  user.set(json as User);
-  saveAuth();
-}
-
-export async function loadAuth() {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    try {
-      const userValue = await fetchUser(token);
-      user.set(userValue);
-    } catch (e: any) {
-      signOut();
-    }
-  }
-
-  isLoading.set(false);
-}
-
 async function fetchUser(token: string): Promise<User> {
   const res = await fetch(`${BASE_URL}/user/details`, {
     headers: {
@@ -213,7 +213,6 @@ async function fetchUser(token: string): Promise<User> {
   return json as User;
 }
 
-function saveAuth() {
-  const userValue = get(user)!;
-  localStorage.setItem("token", userValue.token);
+function saveAuth(token: string) {
+  localStorage.setItem("token", token);
 }

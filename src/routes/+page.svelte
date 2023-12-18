@@ -4,14 +4,15 @@
   import BeachFriends from "$lib/assets/beach_friends.jpg";
   import ChatBubble from "$lib/assets/chat_bubble.jpg";
   import Graph from "$lib/assets/graph.jpg";
-  import { user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import LandingSection from "$lib/components/LandingSection.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
+  import { getAppState } from "$lib/state";
   import { fetchTotalUsers, fetchUsersPerPeriod } from "$lib/stats";
   import { onMount } from "svelte";
 
+  let user = getAppState().userStore.user;
   let totalUsers = 0;
   let usersPerPeriod: any | null = null;
 

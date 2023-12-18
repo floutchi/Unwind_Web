@@ -8,11 +8,19 @@
   import Title from "$lib/components/Title.svelte";
   import { isEmailValid } from "$lib/email";
   import { inviteUser } from "$lib/periods";
+  import { onMount } from "svelte";
   import type { PageData } from "./$types";
+  import { verifyAuth } from "$lib/verify";
+  import { getAppState } from "$lib/state";
 
   export let data: PageData;
+
+  let userStore = getAppState().userStore;
+  let user = userStore.user;
   let users: string[] = [];
   let message = "";
+
+  onMount(() => verifyAuth(userStore));
 
   function handleSubmit(event: SubmitEvent) {
     message = "";
@@ -38,9 +46,9 @@
 
   async function invite() {
     message = "";
-    for (const user of users) {
+    for (const u of users) {
       try {
-        await inviteUser(user, data.id);
+        await inviteUser(u, data.id, $user!.token);
       } catch (e: any) {
         message = e.message;
         return;

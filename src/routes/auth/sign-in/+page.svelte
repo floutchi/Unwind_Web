@@ -1,16 +1,16 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { signIn, user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import GoogleButton from "$lib/components/GoogleButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import Title from "$lib/components/Title.svelte";
+  import { getAppState } from "$lib/state";
   import { onMount } from "svelte";
 
+  let userStore = getAppState().userStore;
   let message = "";
-
   let signInTry = 0;
   let canSignIn = true;
 
@@ -29,7 +29,7 @@
   }
 
   onMount(() => {
-    const unsubscribe = user.subscribe((value) => {
+    const unsubscribe = userStore.user.subscribe((value) => {
       if (value) {
         goto(`${base}/periods`);
       }
@@ -56,7 +56,7 @@
 
     try {
       if (canSignIn && Date.now() > parseInt(globalSignInTime)) {
-        await signIn(email, password);
+        await userStore.signIn(email, password);
       } else {
         signInMessage();
       }

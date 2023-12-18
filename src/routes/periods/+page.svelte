@@ -1,17 +1,22 @@
 <script lang="ts">
-  import { user } from "$lib/auth";
   import Title from "$lib/components/Title.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
   import { onMount } from "svelte";
   import PeriodList from "$lib/components/PeriodList.svelte";
-  import { periods } from "$lib/periods";
+  import { getAppState } from "$lib/state";
+  import { verifyAuth } from "$lib/verify";
 
+  let state = getAppState();
+  let user = state.userStore.user;
+  let periods = state.periodStore;
   let periodsPromise: Promise<void>;
 
   onMount(() => {
+    verifyAuth(state.userStore);
+
     const unsubscribe = user.subscribe((u) => {
       if (u) {
-        periodsPromise = periods.fetch();
+        periodsPromise = periods.fetch(u.token);
       }
     });
 

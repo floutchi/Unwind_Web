@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store";
-import { user, type User } from "./auth";
+import type { User } from "./auth";
 import { BASE_URL } from "./url";
 import type { Activity } from "./activities";
 import type { Place } from "./place";
@@ -25,15 +25,15 @@ export function createPeriodStore(): PeriodStore {
     subscribe,
     getPeriod: (periodId: number): VacationPeriod =>
       get(store)!.find((period) => period.idHoliday === periodId)!,
-    fetch: async () => {
+    fetch: async (token: string) => {
       if (get(store).length === 0) {
-        const periods = await _fetchPeriods();
+        const periods = await _fetchPeriods(token);
         set(periods);
       }
     },
-    fetchPeriod: async (periodId: number) => {
+    fetchPeriod: async (periodId: number, token: string) => {
       const period = get(store).find((period) => period.idHoliday === periodId);
-      const updatedPeriod = await _fetchPeriod(periodId);
+      const updatedPeriod = await _fetchPeriod(periodId, token);
 
       if (!period) {
         update((periods) => [...periods, updatedPeriod]);
@@ -55,7 +55,8 @@ export function createPeriodStore(): PeriodStore {
       num: number,
       zip: string,
       city: string,
-      country: string
+      country: string,
+      token: string
     ) => {
       const period = await _createPeriod(
         name,
@@ -65,12 +66,13 @@ export function createPeriodStore(): PeriodStore {
         num,
         zip,
         city,
-        country
+        country,
+        token
       );
       update((periods) => [...periods, period]);
     },
-    delete: async (periodId: number) => {
-      await _deletePeriod(periodId);
+    delete: async (periodId: number, token: string) => {
+      await _deletePeriod(periodId, token);
       update((periods) =>
         periods.filter((period) => period.idHoliday !== periodId)
       );
@@ -85,7 +87,8 @@ export function createPeriodStore(): PeriodStore {
       num: number,
       zip: string,
       city: string,
-      country: string
+      country: string,
+      token: string
     ) => {
       const period = await _editPeriod(
         periodId,
@@ -96,7 +99,8 @@ export function createPeriodStore(): PeriodStore {
         num,
         zip,
         city,
-        country
+        country,
+        token
       );
       update((periods) => {
         periods[periods.findIndex((period) => period.idHoliday === periodId)] =
@@ -107,10 +111,7 @@ export function createPeriodStore(): PeriodStore {
   };
 }
 
-export const periods = createPeriodStore();
-
-async function _fetchPeriods(): Promise<VacationPeriod[]> {
-  const token = get(user)!.token;
+async function _fetchPeriods(token: string): Promise<VacationPeriod[]> {
   const res = await fetch(`${BASE_URL}/holidayperiod`, {
     headers: {
       "Content-Type": "application/json",
@@ -128,8 +129,10 @@ async function _fetchPeriods(): Promise<VacationPeriod[]> {
   );
 }
 
-async function _fetchPeriod(periodId: number): Promise<VacationPeriod> {
-  const token = get(user)!.token;
+async function _fetchPeriod(
+  periodId: number,
+  token: string
+): Promise<VacationPeriod> {
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -195,7 +198,8 @@ async function _createPeriod(
   num: number,
   zip: string,
   city: string,
-  country: string
+  country: string,
+  token: string
 ): Promise<VacationPeriod> {
   const period: VacationPeriod = {
     idHoliday: 0,
@@ -214,8 +218,6 @@ async function _createPeriod(
     weather: null,
   };
 
-  const token = get(user)!.token;
-
   const res = await fetch(`${BASE_URL}/holidayperiod`, {
     method: "POST",
     headers: {
@@ -233,9 +235,7 @@ async function _createPeriod(
   return (await res.json()) as VacationPeriod;
 }
 
-async function _deletePeriod(periodId: number) {
-  const token = get(user)!.token;
-
+async function _deletePeriod(periodId: number, token: string) {
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
     method: "DELETE",
     headers: {
@@ -257,7 +257,8 @@ async function _editPeriod(
   num: number,
   zip: string,
   city: string,
-  country: string
+  country: string,
+  token: string
 ): Promise<VacationPeriod> {
   const period: VacationPeriod = {
     idHoliday: periodId,
@@ -276,8 +277,6 @@ async function _editPeriod(
     weather: null,
   };
 
-  const token = get(user)!.token;
-
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}`, {
     method: "PUT",
     headers: {
@@ -295,9 +294,11 @@ async function _editPeriod(
   return period;
 }
 
-export async function inviteUser(email: string, periodId: string) {
-  const token = get(user)!.token;
-
+export async function inviteUser(
+  email: string,
+  periodId: string,
+  token: string
+) {
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/user`, {
     method: "POST",
     headers: {
@@ -311,9 +312,11 @@ export async function inviteUser(email: string, periodId: string) {
   }
 }
 
-export async function removeUser(email: string, periodId: string) {
-  const token = get(user)!.token;
-
+export async function removeUser(
+  email: string,
+  periodId: string,
+  token: string
+) {
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/user`, {
     method: "DELETE",
     headers: {
@@ -327,9 +330,10 @@ export async function removeUser(email: string, periodId: string) {
   }
 }
 
-export async function downloadiCal(periodId: number): Promise<Blob> {
-  const token = get(user)!.token;
-
+export async function downloadiCal(
+  periodId: number,
+  token: string
+): Promise<Blob> {
   const res = await fetch(`${BASE_URL}/holidayperiod/${periodId}/ical`, {
     method: "GET",
     headers: {

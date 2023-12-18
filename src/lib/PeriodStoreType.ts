@@ -8,8 +8,8 @@ export interface PeriodStore {
     invalidate?: Invalidator<VacationPeriod[]> | undefined
   ) => Unsubscriber;
   getPeriod: (periodId: number) => VacationPeriod;
-  fetch: () => Promise<void>;
-  fetchPeriod: (periodId: number) => Promise<void>;
+  fetch: (token: string) => Promise<void>;
+  fetchPeriod: (periodId: number, token: string) => Promise<void>;
   create: (
     name: string,
     start: string,
@@ -18,9 +18,10 @@ export interface PeriodStore {
     num: number,
     zip: string,
     city: string,
-    country: string
+    country: string,
+    token: string
   ) => Promise<void>;
-  delete: (periodId: number) => Promise<void>;
+  delete: (periodId: number, token: string) => Promise<void>;
   clear: () => void;
   edit: (
     periodId: number,
@@ -31,6 +32,7 @@ export interface PeriodStore {
     num: number,
     zip: string,
     city: string,
-    country: string
+    country: string,
+    token: string
   ) => Promise<void>;
 }

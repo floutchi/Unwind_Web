@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { SelectOption } from "$lib/SelectOptionType";
-  import { user } from "$lib/auth";
   import Button from "$lib/components/Button.svelte";
   import Input from "$lib/components/Input.svelte";
   import MessageCard from "$lib/components/MessageCard.svelte";
   import SelectInput from "$lib/components/SelectInput.svelte";
-    import Spinner from "$lib/components/Spinner.svelte";
+  import Spinner from "$lib/components/Spinner.svelte";
   import TextArea from "$lib/components/TextArea.svelte";
   import Title from "$lib/components/Title.svelte";
   import { sendEmail, verifyData } from "$lib/contact";
+  import { getAppState } from "$lib/state";
 
   const options: SelectOption[] = [
     {
@@ -25,6 +25,7 @@
     },
   ];
 
+  let user = getAppState().userStore.user;
   let message: string | null = null;
   let isError: boolean = false;
   let isSending: boolean = false;

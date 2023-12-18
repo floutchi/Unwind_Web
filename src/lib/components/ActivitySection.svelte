@@ -7,11 +7,14 @@
   import IconButton from "./IconButton.svelte";
   import ListItem from "./ListItem.svelte";
   import Popup from "./Popup.svelte";
+  import { getAppState } from "$lib/state";
 
   const dispatch = createEventDispatcher();
 
   export let activities: Activity[];
   export let periodId: number;
+
+  let user = getAppState().userStore.user;
   let ascending = true;
   let showPop = false;
   let selectedId: number;
@@ -43,7 +46,7 @@
 
   async function deleteActivityConfirm() {
     showPop = false;
-    await deleteActivity(periodId, selectedId!);
+    await deleteActivity(periodId, selectedId!, $user!.token);
     activities = activities.filter((a) => a.idActivity !== selectedId);
   }
 </script>
