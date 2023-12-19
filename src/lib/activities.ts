@@ -1,4 +1,3 @@
-import { get } from "svelte/store";
 import type { Place } from "./place";
 import { BASE_URL } from "./url";
 

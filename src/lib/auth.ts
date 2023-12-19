@@ -1,7 +1,6 @@
 import { writable } from "svelte/store";
 import { isEmailValid } from "./email";
 import { BASE_URL } from "./url";
-import { getAppState } from "./state";
 
 export interface User {
   firstName: string;

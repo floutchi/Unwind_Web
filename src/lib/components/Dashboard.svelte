@@ -10,7 +10,9 @@
   import WeatherSection from "./WeatherSection.svelte";
 
   export let period: VacationPeriod;
-  let periods = getAppState().periodStore;
+  let state = getAppState();
+  let periods = state.periodStore;
+  let user = state.userStore.user;
 
   let start = new Date(period.startDateTime);
   let end = new Date(period.endDateTime);
@@ -20,12 +22,12 @@
 
   async function deletePeriodConfirm() {
     showPop = false;
-    await periods.delete(period.idHoliday);
+    await periods.delete(period.idHoliday, $user!.token);
     goto(`${base}/periods`);
   }
 
   async function downloadCalendar() {
-    const blob = await downloadiCal(period.idHoliday);
+    const blob = await downloadiCal(period.idHoliday, $user!.token);
 
     const url = window.URL.createObjectURL(blob);
     const downloadLink = document.createElement("a");
